@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,23 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});*/
+
+Route::post('/users/login', 'UserLoginController@login');
+Route::post('/users/register', 'UserRegistrationController@register');
+Route::post('/users/events', 'EventsController@createEvent');
+Route::get('/users/events', 'EventsController@getEventsList');
+Route::post('/users/register/fcm-device-token', 'FCMTokenController@updateDeviceToken');
+Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMessage');
+Route::get('/users/events/broadcast', 'EventsController@eventsBroadcast');
+
+
+Route::get('date', function(){
+
+            ///$startDate = time();
+            $startDate = strtotime('2018-07-17 20:20:00');
+            return date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
+
 });
