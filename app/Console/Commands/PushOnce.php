@@ -72,7 +72,7 @@ class PushOnce extends Command
 
         if ($repeat == 1) { //once
             if ($is_sent_flag == 0) {
-                $this->pushOnce($event->customer->fcm_device_token, $event->title);
+                $this->pushOnce($event->id, $event->customer->fcm_device_token, $event->title);
                 $event->is_notification_sent = 1;
                 $event->save();
             }
@@ -80,18 +80,18 @@ class PushOnce extends Command
         }
     }
 
-    private function pushOnce($token, $message)
+    private function pushOnce($id, $token, $message)
     {
-        $this->sender($token, $message);
+        $this->sender($id, $token, $message);
     }
 
-    function sender($fcm_token, $message)
+    function sender($id, $fcm_token, $message)
     {
         $url = "https://fcm.googleapis.com/fcm/send";
         //$token = "c2YA86KqCpM:APA91bGPldCXppJP84hs8ZSUqyflUuVlHdO2aOz4ckDJSJ4Y1m8ssG5C7yDAXLqdciixwHn3gCVyz7uXssLV-GZSEPlxKL3OsuBiMQENoQIdu7EJtEc9ak119UByK_9i_ZVBHlf6z97Cu3gGP3OdHOIl-nM3EYzSrg";
         $token = $fcm_token;
         $serverKey = 'AAAAploB1QM:APA91bHuQoYT-Ct8J6IpzYKqWDVYdNd91vqtEKHrdQ7sqjMOoXA3P873gXe2hGzHNAWRi7vU92iYtGNYd03UCyMWBRirgKWD0OXtPmO4pD5-MXTEQXdNUCoMXqmrkr7LoN8NB3JOJfvg4R7QR0iO54Rj4VajVcGwXA';
-        $title = "SAMPLE";
+        $title = "My Health";
         $body = $message;
         $notification = array('title' => $title, 'body' => $body, 'sound' => 'default', 'badge' => '1');
         $arrayToSend = array('to' => $token, 'notification' => $notification, 'priority' => 'high');

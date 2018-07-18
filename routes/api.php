@@ -22,9 +22,12 @@ Route::post('/users/login', 'UserLoginController@login');
 Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/events', 'EventsController@createEvent');
 Route::get('/users/events', 'EventsController@getEventsList');
+Route::get('/users/event', 'EventsController@showEvent');
 Route::post('/users/register/fcm-device-token', 'FCMTokenController@updateDeviceToken');
 Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMessage');
 Route::get('/users/events/broadcast', 'EventsController@eventsBroadcast');
+Route::get('/users/events/delete', 'EventsController@delete');
+Route::post('/users/events/update', 'EventsController@updateEvent');
 
 
 Route::get('date', function(){
