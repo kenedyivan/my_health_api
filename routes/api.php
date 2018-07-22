@@ -29,11 +29,18 @@ Route::get('/users/events/broadcast', 'EventsController@eventsBroadcast');
 Route::get('/users/events/delete', 'EventsController@delete');
 Route::post('/users/events/update', 'EventsController@updateEvent');
 
+//Illnesses and Allergies
+Route::get('/users/my-health/illnesses', 'IllnessesController@getIllnesses');
+Route::post('/users/my-health/illnesses/create', 'IllnessesController@createIllness');
 
-Route::get('date', function(){
+//Page data
+Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');
 
-            ///$startDate = time();
-            $startDate = strtotime('2018-07-17 20:20:00');
-            return date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
+
+Route::get('date', function () {
+
+    ///$startDate = time();
+    $startDate = strtotime('2018-07-17 20:20:00');
+    return date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
 
 });

@@ -15,7 +15,6 @@ class UserRegistrationController extends Controller
         $firstName = $request->input('first_name');
         $lastName = $request->input('last_name');
         $username = $request->input('username');
-        $date_of_birth = $request->input('date_of_birth');
         $email_address = $request->input('email_address');
         $phone_number = $request->input('phone_number');
         $password = $request->input('password');
@@ -46,7 +45,6 @@ class UserRegistrationController extends Controller
             $user->first_name = $firstName;
             $user->last_name = $lastName;
             $user->username = $username;
-            $user->date_of_birth = $date_of_birth;
             $user->aar_id = $aar_id;
             $user->email_address = $email_address;
             $user->phone_number = $phone_number;
@@ -58,7 +56,6 @@ class UserRegistrationController extends Controller
                 $resp['user'] = ['first_name'=>$user->first_name,
                     'last_name'=>$user->last_name,
                     'username'=>$user->username,
-                    'date_of_birth'=>$user->date_of_birth,
                     'aar_id'=>$user->aar_id,
                     'email_address'=>$user->email_address,
                     'phone_number'=>$user->phone_number];

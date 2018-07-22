@@ -116,6 +116,7 @@ class EventsController extends Controller
                 $ev['time'] = $event->set_time;
                 $ev['repeat'] = $event->repeat_sequence;
                 $ev['location'] = $event->location;
+                $ev['event_type'] = $event->event_type_id;
 
                 array_push($eventList, $ev);
             }
