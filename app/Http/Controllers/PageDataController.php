@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Disease;
+use App\AllergyType;
 use App\Hospital;
 use Illuminate\Http\Request;
 
@@ -12,10 +13,12 @@ class PageDataController extends Controller
     {
         $hospitals = Hospital::all();
         $diseases = Disease::all();
+        $allergies = AllergyType::all();
 
         $resp = array();
         $hospitalList = array();
         $diseaseList = array();
+        $allergyList = array();
 
         if ($hospitals->count() < 1) {
             $resp['msg'] = 'No hospitals found';
@@ -56,6 +59,27 @@ class PageDataController extends Controller
             $resp['error'] = 0;
             $resp['success'] = 1;
         }
+
+        if ($allergies->count() < 1) {
+            $resp['msg'] = 'No allergies found';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        } else {
+            foreach ($allergies as $allergy) {
+                $al = array();
+                $al["id"] = $allergy->allergy_id;
+                $al["name"] = $allergy->al_name;
+                $al["description"] = $allergy->al_description;
+
+                array_push($allergyList, $al);
+            }
+
+            $resp['msg'] = 'Allergy list';
+            $resp['allergies'] = $allergyList;
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }
+
 
         return $resp;
 

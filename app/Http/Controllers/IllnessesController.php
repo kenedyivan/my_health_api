@@ -88,7 +88,7 @@ class IllnessesController extends Controller
     function createIllness(Request $request)
     {
         $resp = array();
-
+        $page = $request->input('page');
         $disease = $request->input('disease');
         $diagnosis = $request->input('diagnosis');
         $customer_id = $request->input('customer_id');
@@ -99,26 +99,46 @@ class IllnessesController extends Controller
         $hospital = $request->input('hospital');
         $notes = $request->input('notes');
 
-        $illness = new Illness();
+        if($page == 0){
+            $illness = new Illness();
+            $illness->customer_id = $customer_id;
+            $illness->disease_type_id = $disease;
+            $illness->diagnosis = $diagnosis;
+            $illness->t_date = $year . '-' . $month . '-' . $day;
+            $illness->medication = $medication;
+            $illness->notes = $notes;
+            $illness->hospital_id = $hospital;
 
-        $illness->customer_id = $customer_id;
-        $illness->disease_type_id = $disease;
-        $illness->diagnosis = $diagnosis;
-        $illness->t_date = $year . '-' . $month . '-' . $day;
-        $illness->medication = $medication;
-        $illness->notes = $notes;
-        $illness->hospital_id = $hospital;
+            if ($illness->save()) {
+                $resp['msg'] = 'Customer illness created successful';
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+            } else {
+                $resp['msg'] = 'Failed creating customer illness';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+        }else if($page == 1){
+            $allergy = new Allergy();
+            $allergy->customer_id = $customer_id;
+            $allergy->allergy_type_id = $disease;
+            $allergy->diagnosis = $diagnosis;
+            $allergy->t_date = $year . '-' . $month . '-' . $day;
+            $allergy->medication = $medication;
+            $allergy->notes = $notes;
+            $allergy->hospital_id = $hospital;
 
-        if ($illness->save()) {
-            $resp['msg'] = 'Illness created successful';
-            $resp['error'] = 0;
-            $resp['success'] = 1;
-        } else {
-            $resp['msg'] = 'Failed creating illness';
-            $resp['error'] = 1;
-            $resp['success'] = 0;
+            if ($allergy->save()) {
+                $resp['msg'] = 'Customer allergy created successful';
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+            } else {
+                $resp['msg'] = 'Failed creating customer allergy';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
         }
-
+        
         return $resp;
     }
 }

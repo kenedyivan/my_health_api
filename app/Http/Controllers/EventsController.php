@@ -12,6 +12,7 @@ class EventsController extends Controller
     {
         $resp = array();
 
+        $eventType = $request->input('event_type');
         $title = $request->input('title');
         $note = $request->input('note');
         $customer_id = $request->input('customer_id');
@@ -20,18 +21,35 @@ class EventsController extends Controller
         $day = $request->input('day');
         $hour = $request->input('hour');
         $minute = $request->input('minute');
+        $notify_year = $request->input('notify_year');
+        $notify_month = $request->input('notify_month');
+        $notify_day = $request->input('notify_day');
+        $notify_hour = $request->input('notify_hour');
+        $notify_minute = $request->input('notify_minute');
         $repeat = $request->input('repeat');
         $location = $request->input('location');
 
         $event = new Event();
 
+        $ev = '';
+        if($eventType == "Appointment"){
+            $ev = 1;
+        }else if($eventType == "Clinic Visit"){
+            $ev = 2;
+        }else if($eventType == "Reminder"){
+            $ev = 3;
+        }
+
+        $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
         $event->note = $note;
         $event->set_date = $year . '-' . $month . '-' . $day;
         $event->set_time = $hour . ':' . $minute;
+        $event->notify_date = $notify_year . '-' . $notify_month . '-' 
+        . $notify_day.' '.$notify_hour . ':' . $notify_minute;
         $event->repeat_sequence = $repeat;
-        $event->location = $location;
+        $event->hospital_id = $location;
 
         if ($event->save()) {
             $resp['msg'] = 'Event created successful';
