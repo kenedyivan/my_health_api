@@ -117,7 +117,9 @@ class EventsController extends Controller
         $customer_id = $request->input('customer_id');
 
         $eventList = array();
+        
         $events = Event::where('customer_id', $customer_id)
+            ->where('set_date','>=',new DateTime())
             ->orderBy('created_at', 'desc')->get();
 
         if ($events->count() < 1) {

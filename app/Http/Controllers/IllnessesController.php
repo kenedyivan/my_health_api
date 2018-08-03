@@ -32,7 +32,7 @@ class IllnessesController extends Controller
                 foreach ($illnesses as $illness) {
                     $ill = array();
                     $ill["id"] = $illness->customer_illness_id;
-                    $ill["disease"] = $illness->disease_type_id;
+                    $ill["disease"] = $illness->disease_type->d_name;
                     $ill["diagnosis"] = $illness->diagnosis;
                     $ill["t_date"] = $illness->t_date;
                     $ill["medication"] = $illness->medication;
@@ -60,7 +60,7 @@ class IllnessesController extends Controller
                 foreach ($allergies as $allergy) {
                     $al = array();
                     $al["id"] = $allergy->customer_allergy_id;
-                    $al["disease"] = $allergy->allergy_type_id;
+                    $al["disease"] = $allergy->allergy_type->al_name;
                     $al["diagnosis"] = $allergy->diagnosis;
                     $al["t_date"] = $allergy->t_date;
                     $al["medication"] = $allergy->medication;
@@ -71,6 +71,7 @@ class IllnessesController extends Controller
                     array_push($allergiesList, $al);
                 }
 
+            
                 $resp['msg_allergy'] = 'Allergies list';
                 $resp['allergies'] = $allergiesList;
                 $resp['error_allergy'] = 0;
@@ -112,6 +113,7 @@ class IllnessesController extends Controller
             if ($illness->save()) {
                 $resp['msg'] = 'Customer illness created successful';
                 $resp['error'] = 0;
+                $resp['type'] = 0;
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed creating customer illness';
@@ -131,6 +133,7 @@ class IllnessesController extends Controller
             if ($allergy->save()) {
                 $resp['msg'] = 'Customer allergy created successful';
                 $resp['error'] = 0;
+                $resp['type'] = 1;
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed creating customer allergy';
