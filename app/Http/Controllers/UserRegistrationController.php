@@ -84,4 +84,67 @@ class UserRegistrationController extends Controller
         return $output;
     }
 
+    function update(Request $request){
+        $resp = array();
+
+        $userId = $request->input('user_id');
+        $firstName = $request->input('first_name');
+        $lastName = $request->input('last_name');
+        $username = $request->input('username');
+        $email_address = $request->input('email_address');
+        $phone_number = $request->input('phone_number');
+        $password = $request->input('password');
+
+        $user = AppUser::find($userId);
+
+        if($firstName != null && $firstName != $user->first_name){
+            $user->first_name = $firstName;
+        }
+
+        if($lastName !=null && $lastName != $user->last_name){
+            $user->last_name = $lastName;
+        }
+
+        if($username !=null && $username !=$user->username){
+            $user->username = $username;
+        }
+
+        if($email_address !=null && $email_address !=$user->email_address){
+            $user->email_address = $email_address;
+        }
+
+        if($phone_number !=null && $phone_number !=$user->phone_number){
+            $user->phone_number = $phone_number;
+        }
+
+        if($email_address !=null && $email_address !=$user->email_address){
+            $user->email_address = $email_address;
+        }
+
+        if($password !=null){
+            $user->password = md5($password);
+        }
+
+        if($user->save()){
+            $resp['msg'] = 'Changes saved successful';
+            $resp['id'] = $user->customer_id;
+            $resp['user'] = ['first_name'=>$user->first_name,
+                'last_name'=>$user->last_name,
+                'username'=>$user->username,
+                'aar_id'=>$user->aar_id,
+                'email_address'=>$user->email_address,
+                'phone_number'=>$user->phone_number];
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }else{
+            $resp['msg'] = 'Profile changes Process failed';
+            $resp['id'] = 0;
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+
+    }
+
 }

@@ -8,82 +8,97 @@ use Illuminate\Http\Request;
 
 class IllnessesController extends Controller
 {
+    function show(Request $request)
+    {
+        $resp = array();
+        $item_array = array();
+        $my_health_id = $request->input('my_health_id');
+        $type = $request->input('type');
+
+        if ($type == 0) {
+            $illness = Illness::find($my_health_id);
+            $item_array['id'] = $illness->customer_illness_id;
+            $item_array['disease'] = $illness->disease_type->d_name;
+            $item_array['diagnosis'] = $illness->diagnosis;
+            $item_array['date'] = $illness->t_date;
+            $item_array['medication'] = $illness->medication;
+            $item_array['notes'] = $illness->notes;
+            $item_array['hospital'] = $illness->hospital->name;
+            $item_array['created_at'] = $illness->created_at;
+
+        } else {
+            $allergy = Allergy::find($my_health_id);
+            $item_array['id'] = $allergy->customer_allergy_id;
+            $item_array['disease'] = $allergy->allergy_type->al_name;
+            $item_array['diagnosis'] = $allergy->diagnosis;
+            $item_array['date'] = $allergy->t_date;
+            $item_array['medication'] = $allergy->medication;
+            $item_array['notes'] = $allergy->notes;
+            $item_array['hospital'] = $allergy->hospital->name;
+            $item_array['created_at'] = $allergy->created_at;
+        }
+
+        $resp['item'] = $item_array;
+
+        return $resp;
+
+    }
+
+    function delete(Request $request){
+
+        $resp = array();
+
+        $my_heal_id = $request->input('my_health_id');
+        $type = $request->input('type');
+
+        if($type == 0){
+            $illness = Illness::find($my_heal_id);
+            if($illness->delete()){
+                $resp['msg'] = 'Deleted';
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+            }else{
+                $resp['msg'] = 'Deleted faild';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+
+        }else{
+            $allergy = Allergy::find($my_heal_id);
+            if($allergy->delete()){
+                $resp['msg'] = 'Deleted';
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+            }else{
+                $resp['msg'] = 'Delete failed';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+        }
+
+        return $resp;
+    }
+
     function getIllnesses(Request $request)
     {
         $resp = array();
+        $mergedArray = array();
 
         $customer_id = $request->input('customer_id');
-
-        $illnessList = array();
-        $allergiesList = array();
 
         if ($customer_id == 0) {
             $resp['msg'] = 'No Customer Id found';
             $resp['error'] = 1;
             $resp['success'] = 0;
         } else {
-            $illnesses = Illness::where('customer_id', $customer_id)
-                ->orderBy('created_at', 'desc')->get();
-            if ($illnesses->count() < 1) {
-                $resp['msg_illness'] = 'No illnesses found';
-                $resp['error_illness'] = 2;
-                $resp['success_illness'] = 0;
-            } else {
-                foreach ($illnesses as $illness) {
-                    $ill = array();
-                    $ill["id"] = $illness->customer_illness_id;
-                    $ill["disease"] = $illness->disease_type->d_name;
-                    $ill["diagnosis"] = $illness->diagnosis;
-                    $ill["t_date"] = $illness->t_date;
-                    $ill["medication"] = $illness->medication;
-                    $ill["notes"] = $illness->notes;
-                    $ill["hospital"] = $illness->hospital_id;
-                    $ill["created_at"] = $illness->created_at;
-
-                    array_push($illnessList, $ill);
-                }
-
-                $resp['msg_illness'] = 'Illness list';
-                $resp['illnesses'] = $illnessList;
-                $resp['error_illness'] = 0;
-                $resp['success_illness'] = 1;
-            }
-
-            $allergies = Allergy::where('customer_id', $customer_id)
-                ->orderBy('created_at', 'desc')->get();
-
-            if ($allergies->count() < 1) {
-                $resp['msg_allergy'] = 'No allergies found';
-                $resp['error_allergy'] = 2;
-                $resp['success_allergy'] = 0;
-            } else {
-                foreach ($allergies as $allergy) {
-                    $al = array();
-                    $al["id"] = $allergy->customer_allergy_id;
-                    $al["disease"] = $allergy->allergy_type->al_name;
-                    $al["diagnosis"] = $allergy->diagnosis;
-                    $al["t_date"] = $allergy->t_date;
-                    $al["medication"] = $allergy->medication;
-                    $al["notes"] = $allergy->notes;
-                    $al["hospital"] = $allergy->hospital_id;
-                    $al["created_at"] = $allergy->created_at;
-
-                    array_push($allergiesList, $al);
-                }
-
-            
-                $resp['msg_allergy'] = 'Allergies list';
-                $resp['allergies'] = $allergiesList;
-                $resp['error_allergy'] = 0;
-                $resp['success_allergy'] = 1;
-            }
 
             $resp['msg'] = 'Customer Id found';
             $resp['error'] = 0;
             $resp['success'] = 1;
+            $mergedArray = array_merge($resp, $this->getIllnessAndAllergies($customer_id));
         }
 
-        return $resp;
+        return $mergedArray;
     }
 
     function createIllness(Request $request)
@@ -100,7 +115,7 @@ class IllnessesController extends Controller
         $hospital = $request->input('hospital');
         $notes = $request->input('notes');
 
-        if($page == 0){
+        if ($page == 0) {
             $illness = new Illness();
             $illness->customer_id = $customer_id;
             $illness->disease_type_id = $disease;
@@ -120,7 +135,7 @@ class IllnessesController extends Controller
                 $resp['error'] = 1;
                 $resp['success'] = 0;
             }
-        }else if($page == 1){
+        } else if ($page == 1) {
             $allergy = new Allergy();
             $allergy->customer_id = $customer_id;
             $allergy->allergy_type_id = $disease;
@@ -141,7 +156,135 @@ class IllnessesController extends Controller
                 $resp['success'] = 0;
             }
         }
-        
+
+        return $resp;
+    }
+
+    function update(Request $request)
+    {
+        $resp = array();
+        $mergedArray = array();
+        $customer_id = $request->input('customer_id');
+        $page = $request->input('page');
+        $disease = $request->input('disease');
+        $diagnosis = $request->input('diagnosis');
+        $my_health_id = $request->input('my_health_id');
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $day = $request->input('day');
+        $medication = $request->input('medication');
+        $hospital = $request->input('hospital');
+        $notes = $request->input('notes');
+
+        if ($page == 0) {
+            $illness = Illness::find($my_health_id);
+            $illness->disease_type_id = $disease;
+            $illness->diagnosis = $diagnosis;
+            $illness->t_date = $year . '-' . $month . '-' . $day;
+            $illness->medication = $medication;
+            $illness->notes = $notes;
+            $illness->hospital_id = $hospital;
+
+            if ($illness->save()) {
+                $resp['msg'] = 'Customer illness changes saved successful';
+                $resp['error'] = 0;
+                $resp['type'] = 0;
+                $resp['success'] = 1;
+            } else {
+                $resp['msg'] = 'Failed saving customer illness changes';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+        } else if ($page == 1) {
+            $allergy = Allergy::find($my_health_id);
+            $allergy->allergy_type_id = $disease;
+            $allergy->diagnosis = $diagnosis;
+            $allergy->t_date = $year . '-' . $month . '-' . $day;
+            $allergy->medication = $medication;
+            $allergy->notes = $notes;
+            $allergy->hospital_id = $hospital;
+
+            if ($allergy->save()) {
+                $resp['msg'] = 'Customer allergy changes saved successful';
+                $resp['error'] = 0;
+                $resp['type'] = 1;
+                $resp['success'] = 1;
+            } else {
+                $resp['msg'] = 'Failed saving customer allergy changes';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+        }
+
+
+        $mergedArray = array_merge($resp, $this->getIllnessAndAllergies($customer_id));
+        return $mergedArray;
+
+
+    }
+
+    function getIllnessAndAllergies($customer_id)
+    {
+        $resp = array();
+        $illnessList = array();
+        $allergiesList = array();
+
+        $illnesses = Illness::where('customer_id', $customer_id)
+            ->orderBy('created_at', 'desc')->get();
+        if ($illnesses->count() < 1) {
+            $resp['msg_illness'] = 'No illnesses found';
+            $resp['error_illness'] = 2;
+            $resp['success_illness'] = 0;
+        } else {
+            foreach ($illnesses as $illness) {
+                $ill = array();
+                $ill["id"] = $illness->customer_illness_id;
+                $ill["disease"] = $illness->disease_type->d_name;
+                $ill["diagnosis"] = $illness->diagnosis;
+                $ill["t_date"] = $illness->t_date;
+                $ill["medication"] = $illness->medication;
+                $ill["notes"] = $illness->notes;
+                $ill["hospital"] = $illness->hospital->name;
+                $ill["created_at"] = $illness->created_at;
+
+                array_push($illnessList, $ill);
+            }
+
+            $resp['msg_illness'] = 'Illness list';
+            $resp['illnesses'] = $illnessList;
+            $resp['error_illness'] = 0;
+            $resp['success_illness'] = 1;
+        }
+
+        $allergies = Allergy::where('customer_id', $customer_id)
+            ->orderBy('created_at', 'desc')->get();
+
+        if ($allergies->count() < 1) {
+            $resp['msg_allergy'] = 'No allergies found';
+            $resp['error_allergy'] = 2;
+            $resp['success_allergy'] = 0;
+        } else {
+            foreach ($allergies as $allergy) {
+                $al = array();
+                $al["id"] = $allergy->customer_allergy_id;
+                $al["disease"] = $allergy->allergy_type->al_name;
+                $al["diagnosis"] = $allergy->diagnosis;
+                $al["t_date"] = $allergy->t_date;
+                $al["medication"] = $allergy->medication;
+                $al["notes"] = $allergy->notes;
+                $al["hospital"] = $allergy->hospital->name;
+                $al["created_at"] = $allergy->created_at;
+
+                array_push($allergiesList, $al);
+            }
+
+
+            $resp['msg_allergy'] = 'Allergies list';
+            $resp['allergies'] = $allergiesList;
+            $resp['error_allergy'] = 0;
+            $resp['success_allergy'] = 1;
+        }
+
         return $resp;
     }
 }

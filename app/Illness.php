@@ -15,4 +15,9 @@ class Illness extends Model
         'disease_id','disease_type_id');
     }
 
+    public function hospital(){
+        return $this->hasOne('App\Hospital',
+            'hospital_id','hospital_id');
+    }
+
 }

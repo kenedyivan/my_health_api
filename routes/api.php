@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/users/login', 'UserLoginController@login');
 Route::post('/users/register', 'UserRegistrationController@register');
+Route::post('/users/update', 'UserRegistrationController@update');
+
+//Events
 Route::post('/users/events', 'EventsController@createEvent');
 Route::get('/users/events', 'EventsController@getEventsList');
 Route::get('/users/event', 'EventsController@showEvent');
@@ -32,6 +35,9 @@ Route::post('/users/events/update', 'EventsController@updateEvent');
 //Illnesses and Allergies
 Route::get('/users/my-health/illnesses', 'IllnessesController@getIllnesses');
 Route::post('/users/my-health/illnesses/create', 'IllnessesController@createIllness');
+Route::post('/users/my-health/illnesses/update', 'IllnessesController@update');
+Route::get('/users/my-health/illnesses/show', 'IllnessesController@show');
+Route::get('/users/my-health/illnesses/delete', 'IllnessesController@delete');
 
 //Page data
 Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');
