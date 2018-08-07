@@ -32,11 +32,11 @@ class EventsController extends Controller
         $event = new Event();
 
         $ev = '';
-        if($eventType == "Appointment"){
+        if ($eventType == "Appointment") {
             $ev = 1;
-        }else if($eventType == "Clinic Visit"){
+        } else if ($eventType == "Clinic Visit") {
             $ev = 2;
-        }else if($eventType == "Reminder"){
+        } else if ($eventType == "Reminder") {
             $ev = 3;
         }
 
@@ -46,8 +46,8 @@ class EventsController extends Controller
         $event->note = $note;
         $event->set_date = $year . '-' . $month . '-' . $day;
         $event->set_time = $hour . ':' . $minute;
-        $event->notify_date = $notify_year . '-' . $notify_month . '-' 
-        . $notify_day.' '.$notify_hour . ':' . $notify_minute;
+        $event->notify_date = $notify_year . '-' . $notify_month . '-'
+            . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
         $event->repeat_sequence = $repeat;
         $event->hospital_id = $location;
 
@@ -92,7 +92,7 @@ class EventsController extends Controller
         if ($event->save()) {
             $resp['msg'] = 'Event udpated successful';
             $resp['event'] = [
-                'id'=>$event->id,
+                'id' => $event->id,
                 'title' => $event->title,
                 'note' => $event->note,
                 'date' => $event->set_date,
@@ -117,9 +117,9 @@ class EventsController extends Controller
         $customer_id = $request->input('customer_id');
 
         $eventList = array();
-        
+
         $events = Event::where('customer_id', $customer_id)
-            ->where('set_date','>=',new DateTime())
+            ->where('set_date', '>=', new DateTime())
             ->orderBy('created_at', 'desc')->get();
 
         if ($events->count() < 1) {
@@ -135,8 +135,11 @@ class EventsController extends Controller
                 $ev['date'] = $event->set_date;
                 $ev['time'] = $event->set_time;
                 $ev['repeat'] = $event->repeat_sequence;
-                $ev['location'] = $event->location;
-                $ev['event_type'] = $event->event_type_id;
+                $ev['location'] = $event->hospital->name;
+                $ev['event'] = ['event_type_id' => $event->event_type->event_type_id,
+                    'event_type' => $event->event_type->event_type,
+                    'description' => $event->event_type->description
+                ];
 
                 array_push($eventList, $ev);
             }
@@ -150,7 +153,8 @@ class EventsController extends Controller
         return $resp;
     }
 
-    function showEvent(Request $request){
+    function showEvent(Request $request)
+    {
         $resp = array();
         $event_id = $request->input('event_id');
 
@@ -159,13 +163,17 @@ class EventsController extends Controller
         if ($event->save()) {
             $resp['msg'] = 'Event date';
             $resp['event'] = [
-                'id'=>$event->id,
+                'id' => $event->id,
                 'title' => $event->title,
                 'note' => $event->note,
                 'date' => $event->set_date,
                 'time' => $event->set_time,
                 'repeat' => $event->repeat_sequence,
-                'location' => $event->location
+                'location' => $event->hospital->name,
+                'event_type' => ['event_type_id' => $event->event_type->event_type_id,
+                    'event_type' => $event->event_type->event_type,
+                    'description' => $event->event_type->description
+                ]
             ];
             $resp['error'] = 0;
             $resp['success'] = 1;
