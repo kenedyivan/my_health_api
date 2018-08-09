@@ -18,4 +18,9 @@ class Allergy extends Model
         return $this->hasOne('App\Hospital',
             'hospital_id','hospital_id');
     }
+
+    public function medications(){
+        return $this->hasMany('App\AllergyMedication',
+            'customer_allergy_id','customer_allergy_id');
+    }
 }

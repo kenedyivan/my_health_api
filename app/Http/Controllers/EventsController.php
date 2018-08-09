@@ -14,7 +14,6 @@ class EventsController extends Controller
 
         $eventType = $request->input('event_type');
         $title = $request->input('title');
-        $note = $request->input('note');
         $customer_id = $request->input('customer_id');
         $year = $request->input('year');
         $month = $request->input('month');
@@ -32,18 +31,71 @@ class EventsController extends Controller
         $event = new Event();
 
         $ev = '';
-        if ($eventType == "Appointment") {
+        if ($eventType == "appointment") {
             $ev = 1;
-        } else if ($eventType == "Clinic Visit") {
+        } else if ($eventType == "clinic_visit") {
             $ev = 2;
-        } else if ($eventType == "Reminder") {
+        } else if ($eventType == "reminder") {
             $ev = 3;
         }
 
         $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        $event->note = $note;
+        $event->set_date = $year . '-' . $month . '-' . $day;
+        $event->set_time = $hour . ':' . $minute;
+        $event->notify_date = $notify_year . '-' . $notify_month . '-'
+            . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
+        $event->repeat_sequence = $repeat;
+        $event->location = $location;
+
+        if ($event->save()) {
+            $resp['msg'] = 'Event created successful';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        } else {
+            $resp['msg'] = 'Failed creating event';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
+    function createEventWithHospitalId(Request $request)
+    {
+        $resp = array();
+
+        $eventType = $request->input('event_type');
+        $title = $request->input('title');
+        $customer_id = $request->input('customer_id');
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $day = $request->input('day');
+        $hour = $request->input('hour');
+        $minute = $request->input('minute');
+        $notify_year = $request->input('notify_year');
+        $notify_month = $request->input('notify_month');
+        $notify_day = $request->input('notify_day');
+        $notify_hour = $request->input('notify_hour');
+        $notify_minute = $request->input('notify_minute');
+        $repeat = $request->input('repeat');
+        $location = $request->input('location');
+
+        $event = new Event();
+
+        $ev = '';
+        if ($eventType == "appointment") {
+            $ev = 1;
+        } else if ($eventType == "clinic_visit") {
+            $ev = 2;
+        } else if ($eventType == "reminder") {
+            $ev = 3;
+        }
+
+        $event->event_type_id = $ev;
+        $event->customer_id = $customer_id;
+        $event->title = $title;
         $event->set_date = $year . '-' . $month . '-' . $day;
         $event->set_time = $hour . ':' . $minute;
         $event->notify_date = $notify_year . '-' . $notify_month . '-'
@@ -70,7 +122,6 @@ class EventsController extends Controller
 
         $event_id = $request->input('event_id');
         $title = $request->input('title');
-        $note = $request->input('note');
         $customer_id = $request->input('customer_id');
         $year = $request->input('year');
         $month = $request->input('month');
@@ -83,7 +134,6 @@ class EventsController extends Controller
         $event = Event::find($event_id);
 
         $event->title = $title;
-        $event->note = $note;
         $event->set_date = $year . '-' . $month . '-' . $day;
         $event->set_time = $hour . ':' . $minute;
         $event->repeat_sequence = $repeat;
@@ -111,6 +161,27 @@ class EventsController extends Controller
         return $resp;
     }
 
+    function saveComment(Request $request){
+        $resp = array();
+        $event_id = $request->input('event_id');
+        $comment = $request->input('comment');
+
+        $event = Event::find($event_id);
+        $event->note = $comment;
+
+        if($event->save()){
+            $resp['msg'] = 'Comment saved';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }else{
+            $resp['msg'] = 'Failed saving comment';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
 
     function getEventsList(Request $request)
     {
@@ -119,7 +190,6 @@ class EventsController extends Controller
         $eventList = array();
 
         $events = Event::where('customer_id', $customer_id)
-            ->where('set_date', '>=', new DateTime())
             ->orderBy('created_at', 'desc')->get();
 
         if ($events->count() < 1) {
@@ -135,7 +205,7 @@ class EventsController extends Controller
                 $ev['date'] = $event->set_date;
                 $ev['time'] = $event->set_time;
                 $ev['repeat'] = $event->repeat_sequence;
-                $ev['location'] = $event->hospital->name;
+                $ev['location'] = $event->location;
                 $ev['event'] = ['event_type_id' => $event->event_type->event_type_id,
                     'event_type' => $event->event_type->event_type,
                     'description' => $event->event_type->description
@@ -169,7 +239,7 @@ class EventsController extends Controller
                 'date' => $event->set_date,
                 'time' => $event->set_time,
                 'repeat' => $event->repeat_sequence,
-                'location' => $event->hospital->name,
+                'location' => $event->location,
                 'event_type' => ['event_type_id' => $event->event_type->event_type_id,
                     'event_type' => $event->event_type->event_type,
                     'description' => $event->event_type->description

@@ -31,6 +31,7 @@ Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMes
 Route::get('/users/events/broadcast', 'EventsController@eventsBroadcast');
 Route::get('/users/events/delete', 'EventsController@delete');
 Route::post('/users/events/update', 'EventsController@updateEvent');
+Route::post('/users/events/comment', 'EventsController@saveComment');
 
 //Illnesses and Allergies
 Route::get('/users/my-health/illnesses', 'IllnessesController@getIllnesses');
@@ -38,6 +39,11 @@ Route::post('/users/my-health/illnesses/create', 'IllnessesController@createIlln
 Route::post('/users/my-health/illnesses/update', 'IllnessesController@update');
 Route::get('/users/my-health/illnesses/show', 'IllnessesController@show');
 Route::get('/users/my-health/illnesses/delete', 'IllnessesController@delete');
+
+//Medication
+Route::post('/users/my-health/illnesses/medication', 'MedicationsController@save');
+Route::post('/users/my-health/illnesses/medication/edit', 'MedicationsController@update');
+Route::get('/users/my-health/illnesses/medication/delete', 'MedicationsController@delete');
 
 //Page data
 Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');

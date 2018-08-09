@@ -20,4 +20,9 @@ class Illness extends Model
             'hospital_id','hospital_id');
     }
 
+    public function medications(){
+        return $this->hasMany('App\IllnessMedication',
+            'customer_illness_id','customer_illness_id');
+    }
+
 }

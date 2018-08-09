@@ -21,9 +21,18 @@ class IllnessesController extends Controller
             $item_array['disease'] = $illness->disease_type->d_name;
             $item_array['diagnosis'] = $illness->diagnosis;
             $item_array['date'] = $illness->t_date;
-            $item_array['medication'] = $illness->medication;
             $item_array['notes'] = $illness->notes;
-            $item_array['hospital'] = $illness->hospital->name;
+            $medications = array();
+            foreach($illness->medications as $medication){
+                $med_array = array();
+                $med_array['medication_id'] = $medication->illness_medication_id;
+                $med_array['drug_name'] = $medication->drug_name;
+                $med_array['frequency'] = $medication->frequency;
+                $med_array['notes'] = $medication->notes;
+                array_push($medications,$med_array);
+            }
+
+            $item_array['medications'] = $medications;
             $item_array['created_at'] = $illness->created_at;
 
         } else {
@@ -32,9 +41,18 @@ class IllnessesController extends Controller
             $item_array['disease'] = $allergy->allergy_type->al_name;
             $item_array['diagnosis'] = $allergy->diagnosis;
             $item_array['date'] = $allergy->t_date;
-            $item_array['medication'] = $allergy->medication;
             $item_array['notes'] = $allergy->notes;
-            $item_array['hospital'] = $allergy->hospital->name;
+            $medications = array();
+            foreach($allergy->medications as $medication){
+                $med_array = array();
+                $med_array['medication_id'] = $medication->allergy_medication_id;
+                $med_array['drug_name'] = $medication->drug_name;
+                $med_array['frequency'] = $medication->frequency;
+                $med_array['notes'] = $medication->notes;
+                array_push($medications,$med_array);
+            }
+
+            $item_array['medications'] = $medications;
             $item_array['created_at'] = $allergy->created_at;
         }
 
@@ -111,8 +129,6 @@ class IllnessesController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
         $day = $request->input('day');
-        $medication = $request->input('medication');
-        $hospital = $request->input('hospital');
         $notes = $request->input('notes');
 
         if ($page == 0) {
@@ -121,9 +137,7 @@ class IllnessesController extends Controller
             $illness->disease_type_id = $disease;
             $illness->diagnosis = $diagnosis;
             $illness->t_date = $year . '-' . $month . '-' . $day;
-            $illness->medication = $medication;
             $illness->notes = $notes;
-            $illness->hospital_id = $hospital;
 
             if ($illness->save()) {
                 $resp['msg'] = 'Customer illness created successful';
@@ -141,9 +155,7 @@ class IllnessesController extends Controller
             $allergy->allergy_type_id = $disease;
             $allergy->diagnosis = $diagnosis;
             $allergy->t_date = $year . '-' . $month . '-' . $day;
-            $allergy->medication = $medication;
             $allergy->notes = $notes;
-            $allergy->hospital_id = $hospital;
 
             if ($allergy->save()) {
                 $resp['msg'] = 'Customer allergy created successful';
@@ -172,8 +184,6 @@ class IllnessesController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
         $day = $request->input('day');
-        $medication = $request->input('medication');
-        $hospital = $request->input('hospital');
         $notes = $request->input('notes');
 
         if ($page == 0) {
@@ -181,9 +191,7 @@ class IllnessesController extends Controller
             $illness->disease_type_id = $disease;
             $illness->diagnosis = $diagnosis;
             $illness->t_date = $year . '-' . $month . '-' . $day;
-            $illness->medication = $medication;
             $illness->notes = $notes;
-            $illness->hospital_id = $hospital;
 
             if ($illness->save()) {
                 $resp['msg'] = 'Customer illness changes saved successful';
@@ -200,9 +208,7 @@ class IllnessesController extends Controller
             $allergy->allergy_type_id = $disease;
             $allergy->diagnosis = $diagnosis;
             $allergy->t_date = $year . '-' . $month . '-' . $day;
-            $allergy->medication = $medication;
             $allergy->notes = $notes;
-            $allergy->hospital_id = $hospital;
 
             if ($allergy->save()) {
                 $resp['msg'] = 'Customer allergy changes saved successful';
@@ -242,9 +248,7 @@ class IllnessesController extends Controller
                 $ill["disease"] = $illness->disease_type->d_name;
                 $ill["diagnosis"] = $illness->diagnosis;
                 $ill["t_date"] = $illness->t_date;
-                $ill["medication"] = $illness->medication;
                 $ill["notes"] = $illness->notes;
-                $ill["hospital"] = $illness->hospital->name;
                 $ill["created_at"] = $illness->created_at;
 
                 array_push($illnessList, $ill);
@@ -270,9 +274,7 @@ class IllnessesController extends Controller
                 $al["disease"] = $allergy->allergy_type->al_name;
                 $al["diagnosis"] = $allergy->diagnosis;
                 $al["t_date"] = $allergy->t_date;
-                $al["medication"] = $allergy->medication;
                 $al["notes"] = $allergy->notes;
-                $al["hospital"] = $allergy->hospital->name;
                 $al["created_at"] = $allergy->created_at;
 
                 array_push($allergiesList, $al);
