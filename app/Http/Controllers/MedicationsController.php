@@ -104,4 +104,34 @@ class MedicationsController extends Controller
 
         return $resp;
     }
+
+    function reminder(Request $request){
+        $resp = array();
+        $type = $request->input('type');
+        $medication_id = $request->input('medication_id');
+        $days_frequency = $request->input('days_frequency');
+        $set_time = $request->input('set_time');
+
+        if($type == 0){
+            $medication = IllnessMedication::find($medication_id);
+        }else if($type == 1){
+            $medication = AllergyMedication::find($medication_id);
+        }
+
+        $medication->days_frequency = $days_frequency;
+        $medication->set_time = $set_time;
+
+        if($medication->save()){
+            $resp['msg'] = 'Reminder saved successfully';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }else{
+            $resp['msg'] = 'Saving failed';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+
+    }
 }

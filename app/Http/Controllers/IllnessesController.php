@@ -29,6 +29,8 @@ class IllnessesController extends Controller
                 $med_array['drug_name'] = $medication->drug_name;
                 $med_array['frequency'] = $medication->frequency;
                 $med_array['notes'] = $medication->notes;
+                $med_array['set_time'] = $medication->set_time;
+                $med_array['days'] = $medication->days_frequency;
                 array_push($medications,$med_array);
             }
 
@@ -49,6 +51,8 @@ class IllnessesController extends Controller
                 $med_array['drug_name'] = $medication->drug_name;
                 $med_array['frequency'] = $medication->frequency;
                 $med_array['notes'] = $medication->notes;
+                $med_array['set_time'] = $medication->set_time;
+                $med_array['days'] = $medication->days_frequency;
                 array_push($medications,$med_array);
             }
 

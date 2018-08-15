@@ -43,7 +43,12 @@ Route::get('/users/my-health/illnesses/delete', 'IllnessesController@delete');
 //Medication
 Route::post('/users/my-health/illnesses/medication', 'MedicationsController@save');
 Route::post('/users/my-health/illnesses/medication/edit', 'MedicationsController@update');
+//Route::post('/users/my-health/illnesses/medication/reminder', 'MedicationsController@reminder');
 Route::get('/users/my-health/illnesses/medication/delete', 'MedicationsController@delete');
+
+//Alarms
+Route::post('/users/my-health/illnesses/medication/alarm-entries', 'AlarmEntriesController@createAlarmEntry');
+Route::get('/users/my-health/illnesses/medication/alarm-entries', 'AlarmEntriesController@getCustomerAlarmEntries');
 
 //Page data
 Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');
