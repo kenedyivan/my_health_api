@@ -23,7 +23,7 @@ class IllnessesController extends Controller
             $item_array['date'] = $illness->t_date;
             $item_array['notes'] = $illness->notes;
             $medications = array();
-            foreach($illness->medications as $medication){
+            foreach ($illness->medications as $medication) {
                 $med_array = array();
                 $med_array['medication_id'] = $medication->illness_medication_id;
                 $med_array['drug_name'] = $medication->drug_name;
@@ -31,7 +31,7 @@ class IllnessesController extends Controller
                 $med_array['notes'] = $medication->notes;
                 $med_array['set_time'] = $medication->set_time;
                 $med_array['days'] = $medication->days_frequency;
-                array_push($medications,$med_array);
+                array_push($medications, $med_array);
             }
 
             $item_array['medications'] = $medications;
@@ -45,7 +45,7 @@ class IllnessesController extends Controller
             $item_array['date'] = $allergy->t_date;
             $item_array['notes'] = $allergy->notes;
             $medications = array();
-            foreach($allergy->medications as $medication){
+            foreach ($allergy->medications as $medication) {
                 $med_array = array();
                 $med_array['medication_id'] = $medication->allergy_medication_id;
                 $med_array['drug_name'] = $medication->drug_name;
@@ -53,7 +53,7 @@ class IllnessesController extends Controller
                 $med_array['notes'] = $medication->notes;
                 $med_array['set_time'] = $medication->set_time;
                 $med_array['days'] = $medication->days_frequency;
-                array_push($medications,$med_array);
+                array_push($medications, $med_array);
             }
 
             $item_array['medications'] = $medications;
@@ -66,32 +66,33 @@ class IllnessesController extends Controller
 
     }
 
-    function delete(Request $request){
+    function delete(Request $request)
+    {
 
         $resp = array();
 
         $my_heal_id = $request->input('my_health_id');
         $type = $request->input('type');
 
-        if($type == 0){
+        if ($type == 0) {
             $illness = Illness::find($my_heal_id);
-            if($illness->delete()){
+            if ($illness->delete()) {
                 $resp['msg'] = 'Deleted';
                 $resp['error'] = 0;
                 $resp['success'] = 1;
-            }else{
+            } else {
                 $resp['msg'] = 'Deleted faild';
                 $resp['error'] = 1;
                 $resp['success'] = 0;
             }
 
-        }else{
+        } else {
             $allergy = Allergy::find($my_heal_id);
-            if($allergy->delete()){
+            if ($allergy->delete()) {
                 $resp['msg'] = 'Deleted';
                 $resp['error'] = 0;
                 $resp['success'] = 1;
-            }else{
+            } else {
                 $resp['msg'] = 'Delete failed';
                 $resp['error'] = 1;
                 $resp['success'] = 0;
@@ -144,6 +145,14 @@ class IllnessesController extends Controller
             $illness->notes = $notes;
 
             if ($illness->save()) {
+                $resp['data'] = [
+                    'id' => $illness->customer_illness_id,
+                    'type' => 1,
+                    'disease_type' => $illness->disease_type->d_name,
+                    'diagnosis' => $illness->diagnosis,
+                    't_date' => $illness->t_date,
+                    'notes' => $illness->notes,
+                ];
                 $resp['msg'] = 'Customer illness created successful';
                 $resp['error'] = 0;
                 $resp['type'] = 0;
@@ -162,6 +171,14 @@ class IllnessesController extends Controller
             $allergy->notes = $notes;
 
             if ($allergy->save()) {
+                $resp['data'] = [
+                    'id' => $allergy->customer_allergy_id,
+                    'type' => 2,
+                    'disease_type' => $allergy->allergy_type->al_name,
+                    'diagnosis' => $allergy->diagnosis,
+                    't_date' => $allergy->t_date,
+                    'notes' => $allergy->notes,
+                ];
                 $resp['msg'] = 'Customer allergy created successful';
                 $resp['error'] = 0;
                 $resp['type'] = 1;
