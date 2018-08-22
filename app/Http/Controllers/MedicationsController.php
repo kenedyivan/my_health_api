@@ -8,7 +8,8 @@ use App\AllergyMedication;
 
 class MedicationsController extends Controller
 {
-    function save(Request $request){
+    function save(Request $request)
+    {
         $resp = array();
 
         $my_health_id = $request->input('my_health_id');
@@ -18,10 +19,10 @@ class MedicationsController extends Controller
         $notes = $request->input('notes');
 
         $medication = null;
-        if($type == 0){
+        if ($type == 0) {
             $medication = new IllnessMedication();
             $medication->customer_illness_id = $my_health_id;
-        }else if($type == 1){
+        } else if ($type == 1) {
             $medication = new AllergyMedication();
             $medication->customer_allergy_id = $my_health_id;
         }
@@ -30,18 +31,45 @@ class MedicationsController extends Controller
         $medication->frequency = $frequency;
         $medication->notes = $notes;
 
-        if($medication->save()){
+        if ($medication->save()) {
+            if ($type == 0) {
+                $resp['data'] = [
+                    'medication_id' => $medication->illness_medication_id,
+                    'illness_id' => $medication->customer_illness_id,
+                    'drug_name' => $medication->drug_name,
+                    'frequency' => $medication->frequency,
+                    'notes' => $medication->notes,
+                    'set_time' => $medication->set_time,
+                    'days' => $medication->days_frequency
+                ];
+                $problem_type = 'illness';
+            } else {
+                $resp['data'] = [
+                    'medication_id' => $medication->allergy_medication_id,
+                    'allergy_id' => $medication->customer_allergy_id,
+                    'drug_name' => $medication->drug_name,
+                    'frequency' => $medication->frequency,
+                    'notes' => $medication->notes,
+                    'set_time' => $medication->set_time,
+                    'days' => $medication->days_frequency
+                ];
+                $problem_type = 'allergy';
+            }
+            $resp['type'] = $problem_type;
             $resp['msg'] = 'Medication added successfully';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Adding failed';
             $resp['error'] = 1;
             $resp['success'] = 0;
         }
+
+        return $resp;
     }
 
-    function update(Request $request){
+    function update(Request $request)
+    {
         $resp = array();
         $my_health_id = $request->input('my_health_id');
         $type = $request->input('type');
@@ -50,26 +78,26 @@ class MedicationsController extends Controller
         $frequency = $request->input('frequency');
         $notes = $request->input('notes');
 
-        if($type == 0){
+        if ($type == 0) {
             $medication = IllnessMedication::find($medication_id);
-        }else if($type == 1){
+        } else if ($type == 1) {
             $medication = AllergyMedication::find($medication_id);
         }
 
-        if($drug_name != '' && $medication->drug_name != $drug_name)
+        if ($drug_name != '' && $medication->drug_name != $drug_name)
             $medication->drug_name = $drug_name;
-        
-        if($frequency != '' && $medication->frequency != $frequency)
+
+        if ($frequency != '' && $medication->frequency != $frequency)
             $medication->frequency = $frequency;
 
-        if($notes != '' && $medication->notes != $notes)
+        if ($notes != '' && $medication->notes != $notes)
             $medication->notes = $notes;
 
-        if($medication->save()){
+        if ($medication->save()) {
             $resp['msg'] = 'Changes saved successfully';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Saving failed';
             $resp['error'] = 1;
             $resp['success'] = 0;
@@ -79,53 +107,55 @@ class MedicationsController extends Controller
 
     }
 
-    function delete(Request $request){
+    function delete(Request $request)
+    {
         $resp = array();
 
         $medication_id = $request->input('medication_id');
         $type = $request->input('type');
         $medication = null;
-        if($type == 0){
+        if ($type == 0) {
             $medication = IllnessMedication::find($medication_id);
-        }else if($type == 1){
+        } else if ($type == 1) {
             $medication = AllergyMedication::find($medication_id);
         }
-            
-        if($medication->delete()){
+
+        if ($medication->delete()) {
             $resp['msg'] = 'Deleted';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Delete failed';
             $resp['error'] = 1;
             $resp['success'] = 0;
         }
-        
+
 
         return $resp;
     }
 
-    function reminder(Request $request){
+    function reminder(Request $request)
+    {
         $resp = array();
         $type = $request->input('type');
         $medication_id = $request->input('medication_id');
         $days_frequency = $request->input('days_frequency');
         $set_time = $request->input('set_time');
 
-        if($type == 0){
+        if ($type == 0) {
             $medication = IllnessMedication::find($medication_id);
-        }else if($type == 1){
+        } else if ($type == 1) {
             $medication = AllergyMedication::find($medication_id);
         }
 
         $medication->days_frequency = $days_frequency;
         $medication->set_time = $set_time;
 
-        if($medication->save()){
+        if ($medication->save()) {
             $resp['msg'] = 'Reminder saved successfully';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Saving failed';
             $resp['error'] = 1;
             $resp['success'] = 0;

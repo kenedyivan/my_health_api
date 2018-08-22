@@ -147,15 +147,14 @@ class IllnessesController extends Controller
             if ($illness->save()) {
                 $resp['data'] = [
                     'id' => $illness->customer_illness_id,
-                    'type' => 1,
                     'disease_type' => $illness->disease_type->d_name,
                     'diagnosis' => $illness->diagnosis,
                     't_date' => $illness->t_date,
                     'notes' => $illness->notes,
                 ];
+                $resp['type'] = 'illness';
                 $resp['msg'] = 'Customer illness created successful';
                 $resp['error'] = 0;
-                $resp['type'] = 0;
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed creating customer illness';
@@ -173,15 +172,14 @@ class IllnessesController extends Controller
             if ($allergy->save()) {
                 $resp['data'] = [
                     'id' => $allergy->customer_allergy_id,
-                    'type' => 2,
                     'disease_type' => $allergy->allergy_type->al_name,
                     'diagnosis' => $allergy->diagnosis,
                     't_date' => $allergy->t_date,
                     'notes' => $allergy->notes,
                 ];
+                $resp['type'] = 'allergy';
                 $resp['msg'] = 'Customer allergy created successful';
                 $resp['error'] = 0;
-                $resp['type'] = 1;
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed creating customer allergy';
