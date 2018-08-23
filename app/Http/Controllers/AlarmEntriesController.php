@@ -105,6 +105,7 @@ class AlarmEntriesController extends Controller
                 foreach ($set_frequencies as $freqs) {
                     $freq_arr = array();
                     $freq_arr['id'] = $freqs->alarm_frequency_id;
+                    $freq_arr['type'] = $problem_type;
                     $freq_arr['medication_id'] = $medication_id;
                     $freq_arr['unique_alarm_id'] = $freqs->unique_alarm_id;
                     $freq_arr['day'] = $freqs->day;
