@@ -27,6 +27,7 @@ class EventsController extends Controller
         $notify_minute = $request->input('notify_minute');
         $repeat = $request->input('repeat');
         $location = $request->input('location');
+        $unique_alarm_id = $request->input('unique_alarm_id');
 
         $event = new Event();
 
@@ -42,17 +43,31 @@ class EventsController extends Controller
         $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        $event->set_date = $year . '-' . $month . '-' . $day;
-        $event->set_time = $hour . ':' . $minute;
-        $event->notify_date = $notify_year . '-' . $notify_month . '-'
+        $event->actual_date_time = $year . '-' . $month . '-'
+            . $day . ' ' . $hour . ':' . $minute;
+        $event->before_date_time = $notify_year . '-' . $notify_month . '-'
             . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
         $event->repeat_sequence = $repeat;
         $event->location = $location;
+        $event->unique_actual_alarm_id = $unique_alarm_id;
+        $event->unique_before_alarm_id = $unique_alarm_id + 1;
 
         if ($event->save()) {
             $resp['msg'] = 'Event created successful';
             $resp['error'] = 0;
             $resp['success'] = 1;
+            $resp['event'] = [
+                'id' => $event->id,
+                'title' => $event->title,
+                'note' => $event->note,
+                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                'actual_date_time' => $event->actual_date_time,
+                'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                'before_date_time' => $event->before_date_time,
+                'repeat' => $event->repeat_sequence,
+                'location' => $event->location,
+                'event_type' => $event->event_type->event_type
+            ];
         } else {
             $resp['msg'] = 'Failed creating event';
             $resp['error'] = 1;
@@ -161,7 +176,8 @@ class EventsController extends Controller
         return $resp;
     }
 
-    function saveComment(Request $request){
+    function saveComment(Request $request)
+    {
         $resp = array();
         $event_id = $request->input('event_id');
         $comment = $request->input('comment');
@@ -169,11 +185,11 @@ class EventsController extends Controller
         $event = Event::find($event_id);
         $event->note = $comment;
 
-        if($event->save()){
+        if ($event->save()) {
             $resp['msg'] = 'Comment saved';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Failed saving comment';
             $resp['error'] = 1;
             $resp['success'] = 0;
@@ -198,17 +214,17 @@ class EventsController extends Controller
             $resp['success'] = 0;
         } else {
             foreach ($events as $event) {
-                $ev = array();
-                $ev['id'] = $event->id;
-                $ev['title'] = $event->title;
-                $ev['note'] = $event->note;
-                $ev['date'] = $event->set_date;
-                $ev['time'] = $event->set_time;
-                $ev['repeat'] = $event->repeat_sequence;
-                $ev['location'] = $event->location;
-                $ev['event'] = ['event_type_id' => $event->event_type->event_type_id,
-                    'event_type' => $event->event_type->event_type,
-                    'description' => $event->event_type->description
+                $ev = [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'note' => $event->note,
+                    'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                    'actual_date_time' => $event->actual_date_time,
+                    'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                    'before_date_time' => $event->before_date_time,
+                    'repeat' => $event->repeat_sequence,
+                    'location' => $event->location,
+                    'event_type' => $event->event_type->event_type
                 ];
 
                 array_push($eventList, $ev);
@@ -236,14 +252,13 @@ class EventsController extends Controller
                 'id' => $event->id,
                 'title' => $event->title,
                 'note' => $event->note,
-                'date' => $event->set_date,
-                'time' => $event->set_time,
+                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                'actual_date_time' => $event->actual_date_time,
+                'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                'before_date_time' => $event->before_date_time,
                 'repeat' => $event->repeat_sequence,
                 'location' => $event->location,
-                'event_type' => ['event_type_id' => $event->event_type->event_type_id,
-                    'event_type' => $event->event_type->event_type,
-                    'description' => $event->event_type->description
-                ]
+                'event_type' => $event->event_type->event_type
             ];
             $resp['error'] = 0;
             $resp['success'] = 1;
