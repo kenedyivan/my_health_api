@@ -74,7 +74,7 @@ class IllnessesController extends Controller
         $my_heal_id = $request->input('my_health_id');
         $type = $request->input('type');
 
-        if ($type == 0) {
+        if ($type == "ILLNESS") {
             $illness = Illness::find($my_heal_id);
             if ($illness->delete()) {
                 $resp['msg'] = 'Deleted';
@@ -86,7 +86,7 @@ class IllnessesController extends Controller
                 $resp['success'] = 0;
             }
 
-        } else {
+        } else if($type == "ALLERGY"){
             $allergy = Allergy::find($my_heal_id);
             if ($allergy->delete()) {
                 $resp['msg'] = 'Deleted';
@@ -214,8 +214,15 @@ class IllnessesController extends Controller
 
             if ($illness->save()) {
                 $resp['msg'] = 'Customer illness changes saved successful';
+                $resp['data'] = [
+                    'id' => $illness->customer_illness_id,
+                    'disease' => $illness->disease_type->d_name,
+                    'diagnosis' => $illness->diagnosis,
+                    't_date' => $illness->t_date,
+                    'notes' => $illness->notes,
+                ];
                 $resp['error'] = 0;
-                $resp['type'] = 0;
+                $resp['type'] = "ILLNESS";
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed saving customer illness changes';
@@ -231,8 +238,15 @@ class IllnessesController extends Controller
 
             if ($allergy->save()) {
                 $resp['msg'] = 'Customer allergy changes saved successful';
+                $resp['data'] = [
+                    'id' => $allergy->customer_allergy_id,
+                    'disease' => $allergy->allergy_type->al_name,
+                    'diagnosis' => $allergy->diagnosis,
+                    't_date' => $allergy->t_date,
+                    'notes' => $allergy->notes,
+                ];
                 $resp['error'] = 0;
-                $resp['type'] = 1;
+                $resp['type'] = "ALLERGY";
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Failed saving customer allergy changes';

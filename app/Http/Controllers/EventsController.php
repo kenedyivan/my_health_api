@@ -143,14 +143,21 @@ class EventsController extends Controller
         $day = $request->input('day');
         $hour = $request->input('hour');
         $minute = $request->input('minute');
+        $notify_year = $request->input('notify_year');
+        $notify_month = $request->input('notify_month');
+        $notify_day = $request->input('notify_day');
+        $notify_hour = $request->input('notify_hour');
+        $notify_minute = $request->input('notify_minute');
         $repeat = $request->input('repeat');
         $location = $request->input('location');
 
         $event = Event::find($event_id);
 
         $event->title = $title;
-        $event->set_date = $year . '-' . $month . '-' . $day;
-        $event->set_time = $hour . ':' . $minute;
+        $event->actual_date_time = $year . '-' . $month . '-'
+            . $day . ' ' . $hour . ':' . $minute;
+        $event->before_date_time = $notify_year . '-' . $notify_month . '-'
+            . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
         $event->repeat_sequence = $repeat;
         $event->location = $location;
 
@@ -160,10 +167,13 @@ class EventsController extends Controller
                 'id' => $event->id,
                 'title' => $event->title,
                 'note' => $event->note,
-                'date' => $event->set_date,
-                'time' => $event->set_time,
+                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                'actual_date_time' => $event->actual_date_time,
+                'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                'before_date_time' => $event->before_date_time,
                 'repeat' => $event->repeat_sequence,
-                'location' => $event->location
+                'location' => $event->location,
+                'event_type' => $event->event_type->event_type
             ];
             $resp['error'] = 0;
             $resp['success'] = 1;
@@ -187,6 +197,18 @@ class EventsController extends Controller
 
         if ($event->save()) {
             $resp['msg'] = 'Comment saved';
+            $resp['event'] = [
+                'id' => $event->id,
+                'title' => $event->title,
+                'note' => $event->note,
+                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                'actual_date_time' => $event->actual_date_time,
+                'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                'before_date_time' => $event->before_date_time,
+                'repeat' => $event->repeat_sequence,
+                'location' => $event->location,
+                'event_type' => $event->event_type->event_type
+            ];
             $resp['error'] = 0;
             $resp['success'] = 1;
         } else {
