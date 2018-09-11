@@ -40,4 +40,39 @@ class ServiceRequestController extends Controller
 
         return $resp;
     }
+
+    function getServices(Request $request){
+        $customer_id = $request->input('customer_id');
+
+        $resp = array();
+
+        $services = ServiceRequest::where('customer_id', $customer_id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        if($services->count() > 0){
+            $servicesArray = array();
+            foreach ($services as $service){
+                $serviceObject = array();
+                $serviceObject["id"] = $service->service_request_id;
+                $serviceObject["service_type"] = $service->service_type;
+                $serviceObject["set_date"] = $service->set_date;
+                $serviceObject["set_time"] = $service->set_time;
+                $serviceObject["location"] = $service->location;
+
+                array_push($servicesArray,$serviceObject);
+            }
+
+            $resp["services"] = $servicesArray;
+            $resp['msg'] = 'Found services';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }else{
+            $resp['msg'] = 'Failed retrieving services';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
 }

@@ -54,6 +54,7 @@ Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-ent
 
 //Service Request
 Route::post('/users/my-health/service-request', 'ServiceRequestController@create');
+Route::get('/users/my-health/service-request', 'ServiceRequestController@getServices');
 
 
 //Page data
