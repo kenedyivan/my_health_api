@@ -6,7 +6,7 @@ use App\Allergy;
 use App\Illness;
 use Illuminate\Http\Request;
 
-class IllnessesController extends Controller
+class CustomerIllnessesController extends Controller
 {
     function show(Request $request)
     {

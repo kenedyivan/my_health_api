@@ -23,38 +23,41 @@ Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/update', 'UserRegistrationController@update');
 
 //Events
-Route::post('/users/events', 'EventsController@createEvent');
-Route::get('/users/events', 'EventsController@getEventsList');
-Route::get('/users/event', 'EventsController@showEvent');
+Route::post('/users/events', 'CustomerEventsController@createEvent');
+Route::get('/users/events', 'CustomerEventsController@getEventsList');
+Route::get('/users/event', 'CustomerEventsController@showEvent');
 Route::post('/users/register/fcm-device-token', 'FCMTokenController@updateDeviceToken');
 Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMessage');
-Route::get('/users/events/broadcast', 'EventsController@eventsBroadcast');
-Route::get('/users/events/delete', 'EventsController@delete');
-Route::post('/users/events/update', 'EventsController@updateEvent');
-Route::post('/users/events/comment', 'EventsController@saveComment');
+Route::get('/users/events/broadcast', 'CustomerEventsController@eventsBroadcast');
+Route::get('/users/events/delete', 'CustomerEventsController@delete');
+Route::post('/users/events/update', 'CustomerEventsController@updateEvent');
+Route::post('/users/events/comment', 'CustomerEventsController@saveComment');
 
 //Illnesses and Allergies
-Route::get('/users/my-health/illnesses', 'IllnessesController@getIllnesses');
-Route::post('/users/my-health/illnesses/create', 'IllnessesController@createIllness');
-Route::post('/users/my-health/illnesses/update', 'IllnessesController@update');
-Route::get('/users/my-health/illnesses/show', 'IllnessesController@show');
-Route::get('/users/my-health/illnesses/delete', 'IllnessesController@delete');
+Route::get('/users/my-health/illnesses', 'CustomerIllnessesController@getIllnesses');
+Route::post('/users/my-health/illnesses/create', 'CustomerIllnessesController@createIllness');
+Route::post('/users/my-health/illnesses/update', 'CustomerIllnessesController@update');
+Route::get('/users/my-health/illnesses/show', 'CustomerIllnessesController@show');
+Route::get('/users/my-health/illnesses/delete', 'CustomerIllnessesController@delete');
 
 //Medication
-Route::post('/users/my-health/illnesses/medication', 'MedicationsController@save');
-Route::post('/users/my-health/illnesses/medication/edit', 'MedicationsController@update');
-//Route::post('/users/my-health/illnesses/medication/reminder', 'MedicationsController@reminder');
-Route::get('/users/my-health/illnesses/medication/delete', 'MedicationsController@delete');
+Route::post('/users/my-health/illnesses/medication', 'CustomerMedicationsController@save');
+Route::post('/users/my-health/illnesses/medication/edit', 'CustomerMedicationsController@update');
+//Route::post('/users/my-health/illnesses/medication/reminder', 'CustomerMedicationsController@reminder');
+Route::get('/users/my-health/illnesses/medication/delete', 'CustomerMedicationsController@delete');
 
 //Alarms
-Route::post('/users/my-health/illnesses/medication/alarm-entries', 'AlarmEntriesController@createAlarmEntry');
-Route::get('/users/my-health/illnesses/medication/alarm-entries', 'AlarmEntriesController@getCustomerAlarmEntries');
-Route::get('/users/my-health/illnesses/medication/customer-medication-alarm-entries', 'AlarmEntriesController@getCustomerMedicationAlarmEntry');
-Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-entries/update', 'AlarmEntriesController@updateAlarmEntry');
+Route::post('/users/my-health/illnesses/medication/alarm-entries', 'CustomerAlarmEntriesController@createAlarmEntry');
+Route::get('/users/my-health/illnesses/medication/alarm-entries', 'CustomerAlarmEntriesController@getCustomerAlarmEntries');
+Route::get('/users/my-health/illnesses/medication/customer-medication-alarm-entries', 'CustomerAlarmEntriesController@getCustomerMedicationAlarmEntry');
+Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-entries/update', 'CustomerAlarmEntriesController@updateAlarmEntry');
 
 //Service Request
-Route::post('/users/my-health/service-request', 'ServiceRequestController@create');
-Route::get('/users/my-health/service-request', 'ServiceRequestController@getServices');
+Route::post('/users/my-health/service-request', 'CustomerServiceRequestController@create');
+Route::get('/users/my-health/service-request', 'CustomerServiceRequestController@getServices');
+
+//Medications
+Route::get('/medicines', 'MedicationsController@getMedicationList');
 
 
 //Page data

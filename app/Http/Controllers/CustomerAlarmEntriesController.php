@@ -8,7 +8,7 @@ use App\IllnessMedication;
 use App\AllergyMedication;
 use App\AlarmFrequency;
 
-class AlarmEntriesController extends Controller
+class CustomerAlarmEntriesController extends Controller
 {
     function createAlarmEntry(Request $request)
     {

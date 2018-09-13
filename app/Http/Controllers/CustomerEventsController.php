@@ -6,7 +6,7 @@ use App\Event;
 use DateTime;
 use Illuminate\Http\Request;
 
-class EventsController extends Controller
+class CustomerEventsController extends Controller
 {
     function createEvent(Request $request)
     {

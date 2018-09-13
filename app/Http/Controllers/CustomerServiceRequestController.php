@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\ServiceRequest;
 use Illuminate\Http\Request;
 
-class ServiceRequestController extends Controller
+class CustomerServiceRequestController extends Controller
 {
     function create(Request $request)
     {
