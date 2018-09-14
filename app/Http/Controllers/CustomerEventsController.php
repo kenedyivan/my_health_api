@@ -15,16 +15,11 @@ class CustomerEventsController extends Controller
         $eventType = $request->input('event_type');
         $title = $request->input('title');
         $customer_id = $request->input('customer_id');
-        $year = $request->input('year');
-        $month = $request->input('month');
-        $day = $request->input('day');
-        $hour = $request->input('hour');
-        $minute = $request->input('minute');
-        $notify_year = $request->input('notify_year');
-        $notify_month = $request->input('notify_month');
-        $notify_day = $request->input('notify_day');
-        $notify_hour = $request->input('notify_hour');
-        $notify_minute = $request->input('notify_minute');
+        $actual_date_time = $request->input('actual_date_time');
+        $before_ten_mins = $request->input('before_ten_mins');
+        $before_thirty_mins = $request->input('before_thirty_mins');
+        $before_one_hour = $request->input('before_one_hour');
+        $before_one_day = $request->input('before_one_day');
         $repeat = $request->input('repeat');
         $location = $request->input('location');
         $unique_alarm_id = $request->input('unique_alarm_id');
@@ -43,14 +38,34 @@ class CustomerEventsController extends Controller
         $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        $event->actual_date_time = $year . '-' . $month . '-'
-            . $day . ' ' . $hour . ':' . $minute;
-        $event->before_date_time = $notify_year . '-' . $notify_month . '-'
-            . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
+        $event->actual_date_time = $actual_date_time;
+        $event->unique_actual_alarm_id = $unique_alarm_id;
+        $event->before_ten_mins_id = $unique_alarm_id + 1;
+        $event->before_thirty_mins_id = $unique_alarm_id + 2;
+        $event->before_one_hour_id = $unique_alarm_id + 3;
+        $event->before_one_day_id = $unique_alarm_id + 4;
+
+        if ($before_ten_mins != "") {
+            $event->before_ten_mins = $before_ten_mins;
+
+        }
+
+        if ($before_thirty_mins != "") {
+            $event->before_thirty_mins = $before_thirty_mins;
+        }
+
+        if ($before_one_hour != "") {
+            $event->before_one_hour = $before_one_hour;
+        }
+
+        if ($before_one_day != "") {
+            $event->before_one_day = $before_one_day;
+        }
+
+
         $event->repeat_sequence = $repeat;
         $event->location = $location;
-        $event->unique_actual_alarm_id = $unique_alarm_id;
-        $event->unique_before_alarm_id = $unique_alarm_id + 1;
+
 
         if ($event->save()) {
             $resp['msg'] = 'Event created successful';
@@ -62,8 +77,14 @@ class CustomerEventsController extends Controller
                 'note' => $event->note,
                 'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
                 'actual_date_time' => $event->actual_date_time,
-                'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                'before_date_time' => $event->before_date_time,
+                'before_ten_mins_id' => $event->before_ten_mins_id == null ? 0 : $event->before_ten_mins_id,
+                'before_ten_mins' => $event->before_ten_mins,
+                'before_thirty_mins_id' => $event->before_thirty_mins_id == null ? 0 : $event->before_thirty_mins_id,
+                'before_thirty_mins' => $event->before_thirty_mins,
+                'before_one_hour_id' => $event->before_one_hour_id == null ? 0 : $event->before_one_hour_id,
+                'before_one_hour' => $event->before_one_hour,
+                'before_one_day_id' => $event->before_one_day_id == null ? 0 : $event->before_one_day_id,
+                'before_one_day' => $event->before_one_day,
                 'repeat' => $event->repeat_sequence,
                 'location' => $event->location,
                 'event_type' => $event->event_type->event_type
@@ -136,28 +157,64 @@ class CustomerEventsController extends Controller
         $resp = array();
 
         $event_id = $request->input('event_id');
+        $eventType = $request->input('event_type');
         $title = $request->input('title');
         $customer_id = $request->input('customer_id');
-        $year = $request->input('year');
-        $month = $request->input('month');
-        $day = $request->input('day');
-        $hour = $request->input('hour');
-        $minute = $request->input('minute');
-        $notify_year = $request->input('notify_year');
-        $notify_month = $request->input('notify_month');
-        $notify_day = $request->input('notify_day');
-        $notify_hour = $request->input('notify_hour');
-        $notify_minute = $request->input('notify_minute');
+        $actual_date_time = $request->input('actual_date_time');
+        $before_ten_mins = $request->input('before_ten_mins');
+        $before_thirty_mins = $request->input('before_thirty_mins');
+        $before_one_hour = $request->input('before_one_hour');
+        $before_one_day = $request->input('before_one_day');
         $repeat = $request->input('repeat');
         $location = $request->input('location');
 
         $event = Event::find($event_id);
 
+        //$event->event_type_id = $ev;
+        $event->customer_id = $customer_id;
         $event->title = $title;
-        $event->actual_date_time = $year . '-' . $month . '-'
-            . $day . ' ' . $hour . ':' . $minute;
-        $event->before_date_time = $notify_year . '-' . $notify_month . '-'
-            . $notify_day . ' ' . $notify_hour . ':' . $notify_minute;
+        if($event->actual_date_time != $actual_date_time){
+            $event->actual_date_time = $actual_date_time;
+
+            if ($before_ten_mins != "") {
+                $event->before_ten_mins = $before_ten_mins;
+            }
+
+            if ($before_thirty_mins != "") {
+                $event->before_thirty_mins = $before_thirty_mins;
+            }
+
+            if ($before_one_hour != "") {
+                $event->before_one_hour = $before_one_hour;
+            }
+
+            if ($before_one_day != "") {
+                $event->before_one_day = $before_one_day;
+            }
+
+
+        }else{
+            if ($before_ten_mins != "") {
+                $event->before_ten_mins = $before_ten_mins;
+            }
+
+            if ($before_thirty_mins != "") {
+                $event->before_thirty_mins = $before_thirty_mins;
+            }
+
+            if ($before_one_hour != "") {
+                $event->before_one_hour = $before_one_hour;
+            }
+
+            if ($before_one_day != "") {
+                $event->before_one_day = $before_one_day;
+            }
+        }
+
+        //$event->unique_actual_alarm_id = $unique_alarm_id;
+
+
+
         $event->repeat_sequence = $repeat;
         $event->location = $location;
 
@@ -169,8 +226,14 @@ class CustomerEventsController extends Controller
                 'note' => $event->note,
                 'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
                 'actual_date_time' => $event->actual_date_time,
-                'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                'before_date_time' => $event->before_date_time,
+                'before_ten_mins_id' => $event->before_ten_mins_id == null ? 0 : $event->before_ten_mins_id,
+                'before_ten_mins' => $event->before_ten_mins,
+                'before_thirty_mins_id' => $event->before_thirty_mins_id == null ? 0 : $event->before_thirty_mins_id,
+                'before_thirty_mins' => $event->before_thirty_mins,
+                'before_one_hour_id' => $event->before_one_hour_id == null ? 0 : $event->before_one_hour_id,
+                'before_one_hour' => $event->before_one_hour,
+                'before_one_day_id' => $event->before_one_day_id == null ? 0 : $event->before_one_day_id,
+                'before_one_day' => $event->before_one_day,
                 'repeat' => $event->repeat_sequence,
                 'location' => $event->location,
                 'event_type' => $event->event_type->event_type
