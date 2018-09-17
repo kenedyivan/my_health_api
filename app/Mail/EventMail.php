@@ -31,15 +31,20 @@ class EventMail extends Mailable
      */
     public function build()
     {
-        return $this->from('andymugalu@gmail.com')
-            ->subject('Appointment '.'#'.$this->event->id)
+        $event_title = '';
+        if ($this->event->event_type_id == 1) {
+            $event_title = 'Appointment ' . '#' . $this->event->id;
+        } else if ($this->event->event_type_id == 2) {
+            $event_title = 'Clinic visit ' . '#' . $this->event->id;
+        }
+        return $this->subject($event_title)
             ->view('event_mail')->with([
-            'title' => $this->event->title,
-            'actual_date_time' => $this->event->actual_date_time,
-            'location' => $this->event->location,
-            'event_type' => $this->event->event_type->event_type,
-            'customer_name' => $this->event->customer->first_name.' '.$this->event->customer->last_name,
-            'phone_number' => $this->event->customer->phone_number,
-        ]);
+                'title' => $this->event->title,
+                'actual_date_time' => $this->event->actual_date_time,
+                'location' => $this->event->location,
+                'event_type' => $this->event->event_type->event_type,
+                'customer_name' => $this->event->customer->first_name . ' ' . $this->event->customer->last_name,
+                'phone_number' => $this->event->customer->phone_number,
+            ]);
     }
 }

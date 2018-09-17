@@ -31,10 +31,9 @@ class ServiceRequestMail extends Mailable
      */
     public function build()
     {
-        return $this->from('support.aar@gmail.com')
-            ->subject('Service request '.'#'.$this->service->service_request_id)
+        return $this->subject('Service request ' . '#' . $this->service->service_request_id)
             ->view('mail')->with([
-                'customer_name' => $this->service->customer->first_name.' '.$this->service->customer->last_name,
+                'customer_name' => $this->service->customer->first_name . ' ' . $this->service->customer->last_name,
                 'phone_number' => $this->service->customer->phone_number,
                 'service_type' => $this->service->service_type,
                 'location' => $this->service->location,
