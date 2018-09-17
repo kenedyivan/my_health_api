@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ServiceRequestMail;
 use App\ServiceRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerServiceRequestController extends Controller
 {
@@ -29,6 +31,7 @@ class CustomerServiceRequestController extends Controller
         $serviceRequest->location = $location;
 
         if ($serviceRequest->save()) {
+            $this->sendServiceRequestEmail($serviceRequest);
             $resp['msg'] = 'Service request created successfully';
             $resp['error'] = 0;
             $resp['success'] = 1;
@@ -74,5 +77,16 @@ class CustomerServiceRequestController extends Controller
         }
 
         return $resp;
+    }
+
+    function getServiceCustomer(){
+        $service = ServiceRequest::find(13);
+        return $service->customer;
+    }
+
+    private function sendServiceRequestEmail($service)
+    {
+        Mail::to("andymugalu@gmail.com")->send(new ServiceRequestMail($service));
+        return "Mail sent";
     }
 }

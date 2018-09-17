@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Event;
+use App\Mail\EventMail;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerEventsController extends Controller
 {
@@ -89,6 +91,8 @@ class CustomerEventsController extends Controller
                 'location' => $event->location,
                 'event_type' => $event->event_type->event_type
             ];
+
+            $this->sendEventEmail($event);
         } else {
             $resp['msg'] = 'Failed creating event';
             $resp['error'] = 1;
@@ -286,18 +290,23 @@ class CustomerEventsController extends Controller
 
     function getEventsList(Request $request)
     {
+        //Get the customer id
         $customer_id = $request->input('customer_id');
 
+        //Create an array object to hold the events
         $eventList = array();
 
+        //Query the database given the customer id
         $events = Event::where('customer_id', $customer_id)
             ->orderBy('created_at', 'desc')->get();
 
+        //check if the events are available
         if ($events->count() < 1) {
             $resp['msg'] = 'No events found';
             $resp['error'] = 1;
             $resp['success'] = 0;
         } else {
+            //Events are available
             foreach ($events as $event) {
                 $ev = [
                     'id' => $event->id,
@@ -321,7 +330,7 @@ class CustomerEventsController extends Controller
             $resp['success'] = 1;
         }
 
-        return $resp;
+        return json_encode($resp);
     }
 
     function showEvent(Request $request)
@@ -507,5 +516,11 @@ class CustomerEventsController extends Controller
     private function pushMonthly()
     {
 
+    }
+
+    private function sendEventEmail($event)
+    {
+        Mail::to("andymugalu@gmail.com")->send(new EventMail($event));
+        return "Mail sent";
     }
 }
