@@ -520,7 +520,7 @@ class CustomerEventsController extends Controller
 
     private function sendEventEmail($event)
     {
-        Mail::to("andymugalu@gmail.com")->send(new EventMail($event));
+        Mail::to("kenedyakenaivan@gmail.com")->send(new EventMail($event));
         return "Mail sent";
     }
 }
