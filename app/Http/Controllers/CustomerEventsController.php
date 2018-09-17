@@ -92,7 +92,10 @@ class CustomerEventsController extends Controller
                 'event_type' => $event->event_type->event_type
             ];
 
-            $this->sendEventEmail($event);
+            if($ev == 1){
+                $this->sendEventEmail($event);
+            }
+
         } else {
             $resp['msg'] = 'Failed creating event';
             $resp['error'] = 1;
