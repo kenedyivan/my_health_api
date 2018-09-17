@@ -86,7 +86,7 @@ class CustomerServiceRequestController extends Controller
 
     private function sendServiceRequestEmail($service)
     {
-        Mail::to("andymugalu@gmail.com")->send(new ServiceRequestMail($service));
+        Mail::to("kenedyakenaivan@gmail.com")->send(new ServiceRequestMail($service));
         return "Mail sent";
     }
 }
