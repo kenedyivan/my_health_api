@@ -32,7 +32,7 @@ class EventMail extends Mailable
     public function build()
     {
         return $this->from('andymugalu@gmail.com')
-            ->subject('Appointment')
+            ->subject('Appointment '.'#'.$this->event->id)
             ->view('event_mail')->with([
             'title' => $this->event->title,
             'actual_date_time' => $this->event->actual_date_time,
