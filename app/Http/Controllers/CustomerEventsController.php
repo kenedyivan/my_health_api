@@ -92,7 +92,7 @@ class CustomerEventsController extends Controller
                 'event_type' => $event->event_type->event_type
             ];
 
-            if($ev == 1){
+            if($ev == 1 || $ev == 2){
                 $this->sendEventEmail($event);
             }
 
