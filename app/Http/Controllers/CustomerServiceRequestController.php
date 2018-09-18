@@ -90,6 +90,6 @@ class CustomerServiceRequestController extends Controller
     private function sendServiceRequestEmail($service)
     {
         $emailHandler = EmailHandlerFactory::createEmailHandler();
-        $emailHandler->sendAppointmentEmail($service);
+        $emailHandler->sendServiceRequestEmail($service);
     }
 }
