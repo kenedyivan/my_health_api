@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EmailHandler\EmailHandlerFactory;
 use App\Mail\ServiceRequestMail;
 use App\ServiceRequest;
 use Illuminate\Http\Request;
@@ -44,18 +45,19 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
-    function getServices(Request $request){
+    function getServices(Request $request)
+    {
         $customer_id = $request->input('customer_id');
 
         $resp = array();
 
         $services = ServiceRequest::where('customer_id', $customer_id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        if($services->count() > 0){
+        if ($services->count() > 0) {
             $servicesArray = array();
-            foreach ($services as $service){
+            foreach ($services as $service) {
                 $serviceObject = array();
                 $serviceObject["id"] = $service->service_request_id;
                 $serviceObject["service_type"] = $service->service_type;
@@ -63,14 +65,14 @@ class CustomerServiceRequestController extends Controller
                 $serviceObject["set_time"] = $service->set_time;
                 $serviceObject["location"] = $service->location;
 
-                array_push($servicesArray,$serviceObject);
+                array_push($servicesArray, $serviceObject);
             }
 
             $resp["services"] = $servicesArray;
             $resp['msg'] = 'Found services';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Failed retrieving services';
             $resp['error'] = 1;
             $resp['success'] = 0;
@@ -79,14 +81,15 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
-    function getServiceCustomer(){
+    function getServiceCustomer()
+    {
         $service = ServiceRequest::find(13);
         return $service->customer;
     }
 
     private function sendServiceRequestEmail($service)
     {
-        Mail::to("andymugalu@gmail.com")->send(new ServiceRequestMail($service));
-        return "Mail sent";
+        $emailHandler = EmailHandlerFactory::createEmailHandler();
+        $emailHandler->sendAppointmentEmail($service);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EmailHandler\EmailHandlerFactory;
 use App\Event;
 use App\Mail\EventMail;
 use DateTime;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 
 class CustomerEventsController extends Controller
 {
+
     function createEvent(Request $request)
     {
         $resp = array();
@@ -389,141 +391,10 @@ class CustomerEventsController extends Controller
         return $resp;
     }
 
-    function eventsBroadcast()
-    {
-        /*$eventList = array();
-        $events = Event::where('repeat_sequence', 1)
-            ->where('is_notification_sent', 0)
-            ->orderBy('created_at', 'desc')->get();
-
-        foreach ($events as $event) {
-            $ev = array();
-            $ev["event_id"] = $event->id;
-            $ev['set_date_time'] = $event->set_date . ' ' . $event->set_time;
-
-            if (new DateTime() > new DateTime($ev['set_date_time'])) {
-                $state = 'your time is passed';
-            } else {
-                $state = 'your time not passed';
-            }
-
-            $ev['state'] = $state;
-            $ev['customer'] = $event->customer;
-
-            array_push($eventList, $ev);
-        }
-
-        return $eventList;*/
-
-        $eventList = array();
-        $events = Event::where('set_date', '<>', null)->where('repeat_sequence', 1)
-            ->where('is_notification_sent', 0)
-            ->orderBy('created_at', 'desc')->get();
-
-        foreach ($events as $event) {
-            $ev = array();
-            $ev['set_date_time'] = $event->set_date . ' ' . $event->set_time;
-
-            if (new DateTime() > new DateTime($ev['set_date_time'])) {
-                $state = 'your time is passed';
-                $this->sendOnce($event);
-            } else {
-                $state = 'your time not passed';
-            }
-
-            $ev['state'] = $state;
-            $ev['customer'] = $event->customer;
-
-            array_push($eventList, $ev);
-        }
-
-        return $eventList;
-    }
-
-    private function sendOnce($event)
-    {
-        echo $event->customer->fcm_device_token;
-        /*$repeat = $event->repeat_sequence;
-        $is_sent_flag = $event->is_notification_sent;
-
-        if ($repeat == 1) { //once
-            if ($is_sent_flag == 0) {
-                $this->pushOnce();
-                $event->is_notification_sent = 1;
-                $event->save();
-            }
-
-        }*/
-    }
-
-    private function sendDaily($event)
-    {
-        $repeat = $event->repeat_sequence;
-        $is_sent_flag = $event->is_notification_sent;
-        if ($repeat == 2) { //daily
-            if ($is_sent_flag == 0) {
-                $this->pushDaily();
-                $startDate = strtotime($event->next_hit_date_time);
-                $next_date_time = date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
-                $event->next_hit_date_time = $next_date_time;
-                $event->save();
-            }
-        }
-    }
-
-    private function sendWeekly($event)
-    {
-        $repeat = $event->repeat_sequence;
-        $is_sent_flag = $event->is_notification_sent;
-        if ($repeat == 3) { //daily
-            if ($is_sent_flag == 0) {
-                $this->pushWeekly();
-                $startDate = strtotime($event->next_hit_date_time);
-                $next_date_time = date('Y-m-d H:i:s', strtotime('+7 day', $startDate));
-                $event->next_hit_date_time = $next_date_time;
-                $event->save();
-            }
-        }
-    }
-
-    private function sendMonthly($event)
-    {
-        $repeat = $event->repeat_sequence;
-        $is_sent_flag = $event->is_notification_sent;
-        if ($repeat == 4) { //daily
-            if ($is_sent_flag == 0) {
-                $this->pushMonthly();
-                $startDate = strtotime($event->next_hit_date_time);
-                $next_date_time = date('Y-m-d H:i:s', strtotime('+30 day', $startDate));
-                $event->next_hit_date_time = $next_date_time;
-                $event->save();
-            }
-        }
-    }
-
-    private function pushOnce()
-    {
-
-    }
-
-    private function pushDaily()
-    {
-
-    }
-
-    private function pushWeekly()
-    {
-
-    }
-
-    private function pushMonthly()
-    {
-
-    }
 
     private function sendEventEmail($event)
     {
-        Mail::to("andymugalu@gmail.com")->send(new EventMail($event));
-        return "Mail sent";
+        $emailHandler = EmailHandlerFactory::createEmailHandler();
+        $emailHandler->sendAppointmentEmail($event);
     }
 }
