@@ -33,6 +33,7 @@ Route::post('/users/register/fcm-device-token', 'FCMTokenController@updateDevice
 Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMessage');
 Route::get('/users/events/broadcast', 'CustomerEventsController@eventsBroadcast');
 Route::get('/users/events/delete', 'CustomerEventsController@delete');
+Route::post('/users/events/cancel', 'CustomerEventsController@cancelEvent');
 Route::post('/users/events/update', 'CustomerEventsController@updateEvent');
 Route::post('/users/events/comment', 'CustomerEventsController@saveComment');
 

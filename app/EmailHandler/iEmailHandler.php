@@ -12,5 +12,7 @@ namespace App\EmailHandler;
 interface iEmailHandler
 {
     public function sendServiceRequestEmail($service);
+    public function sendServiceRequestCancelEmail($service);
     public function sendAppointmentEmail($event);
+    public function sendCancelAppointmentEmail($event);
 }

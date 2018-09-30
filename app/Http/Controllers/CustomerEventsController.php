@@ -70,6 +70,7 @@ class CustomerEventsController extends Controller
 
         $event->repeat_sequence = $repeat;
         $event->location = $location;
+        $event->is_cancelled = 0;
 
 
         if ($event->save()) {
@@ -77,24 +78,7 @@ class CustomerEventsController extends Controller
             $resp['msg'] = 'Event created successful';
             $resp['error'] = 0;
             $resp['success'] = 1;
-            $resp['event'] = [
-                'id' => $event->id,
-                'title' => $event->title,
-                'note' => $event->note,
-                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                'actual_date_time' => $event->actual_date_time,
-                'before_ten_mins_id' => $event->before_ten_mins_id == null ? 0 : $event->before_ten_mins_id,
-                'before_ten_mins' => $event->before_ten_mins,
-                'before_thirty_mins_id' => $event->before_thirty_mins_id == null ? 0 : $event->before_thirty_mins_id,
-                'before_thirty_mins' => $event->before_thirty_mins,
-                'before_one_hour_id' => $event->before_one_hour_id == null ? 0 : $event->before_one_hour_id,
-                'before_one_hour' => $event->before_one_hour,
-                'before_one_day_id' => $event->before_one_day_id == null ? 0 : $event->before_one_day_id,
-                'before_one_day' => $event->before_one_day,
-                'repeat' => $event->repeat_sequence,
-                'location' => $event->location,
-                'event_type' => $event->event_type->event_type
-            ];
+            $resp['event'] = $this->parseEventDetails($event);
 
             if ($ev == 1 || $ev == 2) {
                 $this->sendEventEmail($event);
@@ -108,6 +92,29 @@ class CustomerEventsController extends Controller
         }
 
         return $resp;
+    }
+
+    private function parseEventDetails($event)
+    {
+        return [
+            'id' => $event->id,
+            'title' => $event->title,
+            'note' => $event->note,
+            'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+            'actual_date_time' => $event->actual_date_time,
+            'before_ten_mins_id' => $event->before_ten_mins_id == null ? 0 : $event->before_ten_mins_id,
+            'before_ten_mins' => $event->before_ten_mins,
+            'before_thirty_mins_id' => $event->before_thirty_mins_id == null ? 0 : $event->before_thirty_mins_id,
+            'before_thirty_mins' => $event->before_thirty_mins,
+            'before_one_hour_id' => $event->before_one_hour_id == null ? 0 : $event->before_one_hour_id,
+            'before_one_hour' => $event->before_one_hour,
+            'before_one_day_id' => $event->before_one_day_id == null ? 0 : $event->before_one_day_id,
+            'before_one_day' => $event->before_one_day,
+            'repeat' => $event->repeat_sequence,
+            'location' => $event->location,
+            'event_type' => $event->event_type->event_type,
+            'is_cancelled' => $event->is_cancelled
+        ];
     }
 
     function createEventWithHospitalId(Request $request)
@@ -231,24 +238,7 @@ class CustomerEventsController extends Controller
 
         if ($event->save()) {
             $resp['msg'] = 'Event udpated successful';
-            $resp['event'] = [
-                'id' => $event->id,
-                'title' => $event->title,
-                'note' => $event->note,
-                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                'actual_date_time' => $event->actual_date_time,
-                'before_ten_mins_id' => $event->before_ten_mins_id == null ? 0 : $event->before_ten_mins_id,
-                'before_ten_mins' => $event->before_ten_mins,
-                'before_thirty_mins_id' => $event->before_thirty_mins_id == null ? 0 : $event->before_thirty_mins_id,
-                'before_thirty_mins' => $event->before_thirty_mins,
-                'before_one_hour_id' => $event->before_one_hour_id == null ? 0 : $event->before_one_hour_id,
-                'before_one_hour' => $event->before_one_hour,
-                'before_one_day_id' => $event->before_one_day_id == null ? 0 : $event->before_one_day_id,
-                'before_one_day' => $event->before_one_day,
-                'repeat' => $event->repeat_sequence,
-                'location' => $event->location,
-                'event_type' => $event->event_type->event_type
-            ];
+            $resp['event'] = $this->parseEventDetails($event);
             $resp['error'] = 0;
             $resp['success'] = 1;
         } else {
@@ -372,6 +362,50 @@ class CustomerEventsController extends Controller
         return $resp;
     }
 
+    function cancelEvent(Request $request)
+    {
+        $resp = array();
+        $event_id = $request->input('event_id');
+
+
+        $event = $event = Event::find($event_id);
+
+        if ($event != null) {
+            if ($event->is_cancelled == 1) {
+                Log::info("Event " . $event->title . ' already cancelled');
+                $resp['msg'] = 'Event already cancelled';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            } else {
+                $event->is_cancelled = 1;
+
+                if ($event->save()) {
+                    Log::info("Cancelled event " . $event->title);
+                    $resp['msg'] = 'Event cancelled';
+                    $resp['error'] = 0;
+                    $resp['success'] = 1;
+
+                    $this->sendCancelEventEmail($event);
+
+                } else {
+                    Log::debug('Failed cancelling event ' . $event->title);
+                    $resp['msg'] = 'Failed cancelling event';
+                    $resp['error'] = 2;
+                    $resp['success'] = 0;
+                }
+            }
+
+        } else {
+            Log::debug('Event with id ' . $event_id . ' not found');
+            $resp['msg'] = 'Event not found';
+            $resp['error'] = 3;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+
+    }
+
     function delete(Request $request)
     {
         $resp = array();
@@ -398,5 +432,11 @@ class CustomerEventsController extends Controller
     {
         $emailHandler = EmailHandlerFactory::createEmailHandler();
         $emailHandler->sendAppointmentEmail($event);
+    }
+
+    private function sendCancelEventEmail($event)
+    {
+        $emailHandler = EmailHandlerFactory::createEmailHandler();
+        $emailHandler->sendCancelAppointmentEmail($event);
     }
 }
