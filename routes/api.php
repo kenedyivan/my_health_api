@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +19,11 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
+//Users routes
 Route::post('/users/login', 'UserLoginController@login');
 Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/update', 'UserRegistrationController@update');
+Route::post('/users/update-password', 'UserRegistrationController@updatePassword');
 
 //Events
 Route::post('/users/events', 'CustomerEventsController@createEvent');
@@ -74,4 +77,8 @@ Route::get('date', function () {
     $startDate = strtotime('2018-07-17 20:20:00');
     return date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
 
+});
+
+Route::get('/test-logging', function(){
+	Log::debug('Logging test message.');
 });

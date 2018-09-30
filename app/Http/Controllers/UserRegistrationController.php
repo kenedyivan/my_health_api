@@ -9,7 +9,8 @@ class UserRegistrationController extends Controller
 {
 
 
-    function register(Request $request){
+    function register(Request $request)
+    {
         $resp = array();
 
         $firstName = $request->input('first_name');
@@ -21,22 +22,22 @@ class UserRegistrationController extends Controller
 
 
         //Checks if username is already used
-        $username_check = AppUser::where('username',$username)->take(1)->get();
+        $username_check = AppUser::where('username', $username)->take(1)->get();
 
-        if($username_check->count() > 0){
+        if ($username_check->count() > 0) {
             $resp['msg'] = 'Username already taken';
             $resp['id'] = 0;
             $resp['error'] = 2;
             $resp['success'] = 0;
-        }else{
+        } else {
             $aar_id = '';
-            while(true){
+            while (true) {
                 //Generates new aar_id
                 $aar_id = $this->unique_aar_id();
 
                 //Checks if aar_id already used
-                $aar_id_check = AppUser::where('aar_id',$aar_id)->take(1)->get();
-                if($aar_id_check->count() != 1){
+                $aar_id_check = AppUser::where('aar_id', $aar_id)->take(1)->get();
+                if ($aar_id_check->count() != 1) {
                     break;
                 }
             }
@@ -50,18 +51,18 @@ class UserRegistrationController extends Controller
             $user->phone_number = $phone_number;
             $user->password = md5($password);
 
-            if($user->save()){
+            if ($user->save()) {
                 $resp['msg'] = 'User registration successful';
                 $resp['id'] = $user->customer_id;
-                $resp['user'] = ['first_name'=>$user->first_name,
-                    'last_name'=>$user->last_name,
-                    'username'=>$user->username,
-                    'aar_id'=>$user->aar_id,
-                    'email_address'=>$user->email_address,
-                    'phone_number'=>$user->phone_number];
+                $resp['user'] = ['first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'username' => $user->username,
+                    'aar_id' => $user->aar_id,
+                    'email_address' => $user->email_address,
+                    'phone_number' => $user->phone_number];
                 $resp['error'] = 0;
                 $resp['success'] = 1;
-            }else{
+            } else {
                 $resp['msg'] = 'User registration Process failed';
                 $resp['id'] = 0;
                 $resp['error'] = 1;
@@ -84,7 +85,8 @@ class UserRegistrationController extends Controller
         return $output;
     }
 
-    function update(Request $request){
+    function update(Request $request)
+    {
         $resp = array();
 
         $userId = $request->input('user_id');
@@ -93,53 +95,78 @@ class UserRegistrationController extends Controller
         $username = $request->input('username');
         $email_address = $request->input('email_address');
         $phone_number = $request->input('phone_number');
-        $password = $request->input('password');
 
         $user = AppUser::find($userId);
 
-        if($firstName != null && $firstName != $user->first_name){
+        if ($firstName != null && $firstName != $user->first_name) {
             $user->first_name = $firstName;
         }
 
-        if($lastName !=null && $lastName != $user->last_name){
+        if ($lastName != null && $lastName != $user->last_name) {
             $user->last_name = $lastName;
         }
 
-        if($username !=null && $username !=$user->username){
+        if ($username != null && $username != $user->username) {
             $user->username = $username;
         }
 
-        if($email_address !=null && $email_address !=$user->email_address){
+        if ($email_address != null && $email_address != $user->email_address) {
             $user->email_address = $email_address;
         }
 
-        if($phone_number !=null && $phone_number !=$user->phone_number){
+        if ($phone_number != null && $phone_number != $user->phone_number) {
             $user->phone_number = $phone_number;
         }
 
-        if($email_address !=null && $email_address !=$user->email_address){
+        if ($email_address != null && $email_address != $user->email_address) {
             $user->email_address = $email_address;
         }
 
-        if($password !=null){
-            $user->password = md5($password);
-        }
-
-        if($user->save()){
+        if ($user->save()) {
             $resp['msg'] = 'Changes saved successful';
             $resp['id'] = $user->customer_id;
-            $resp['user'] = ['first_name'=>$user->first_name,
-                'last_name'=>$user->last_name,
-                'username'=>$user->username,
-                'aar_id'=>$user->aar_id,
-                'email_address'=>$user->email_address,
-                'phone_number'=>$user->phone_number];
+            $resp['user'] = ['first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'username' => $user->username,
+                'aar_id' => $user->aar_id,
+                'email_address' => $user->email_address,
+                'phone_number' => $user->phone_number];
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Profile changes Process failed';
             $resp['id'] = 0;
             $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+
+    }
+
+    function updatePassword(Request $request)
+    {
+        $customer_id = $request->input('customer_id');
+        $password = $request->input('password');
+
+        $user = AppUser::find($customer_id);
+
+        $resp = array();
+        if ($password != null) {
+            $user->password = md5($password);
+            if ($user->save()) {
+                $resp['msg'] = 'Password updated';
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+
+            } else {
+                $resp['msg'] = 'Password update failed';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+        } else {
+            $resp['msg'] = 'Password field empty';
+            $resp['error'] = 2;
             $resp['success'] = 0;
         }
 

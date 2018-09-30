@@ -11,6 +11,7 @@ namespace App\EmailHandler;
 
 use App\Mail\EventMail;
 use App\Mail\ServiceRequestMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class EmailHandlerImpl implements iEmailHandler
@@ -29,19 +30,23 @@ class EmailHandlerImpl implements iEmailHandler
     public function sendServiceRequestEmail($service)
     {
         try {
+            Log::info("Sent service email to recipient address ".$this->receipient);
             Mail::to($this->receipient)->send(new ServiceRequestMail($service));
 
         } catch (\Exception $e) {
             // Error sending mail
+            Log::debug($e->getMessage());
         }
     }
 
     public function sendAppointmentEmail($event)
     {
         try {
+            Log::info("Sent appointment email to recipient address ".$this->receipient);
             Mail::to($this->receipient)->send(new EventMail($event));
         } catch (\Exception $e) {
             //Error sending mail
+            Log::debug($e->getMessage());
         }
 
     }

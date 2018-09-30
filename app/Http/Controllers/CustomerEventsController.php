@@ -7,6 +7,7 @@ use App\Event;
 use App\Mail\EventMail;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CustomerEventsController extends Controller
@@ -72,6 +73,7 @@ class CustomerEventsController extends Controller
 
 
         if ($event->save()) {
+            Log::info($event->customer->username . " created " . $event->event_type->event_type);
             $resp['msg'] = 'Event created successful';
             $resp['error'] = 0;
             $resp['success'] = 1;
@@ -94,11 +96,12 @@ class CustomerEventsController extends Controller
                 'event_type' => $event->event_type->event_type
             ];
 
-            if($ev == 1 || $ev == 2){
+            if ($ev == 1 || $ev == 2) {
                 $this->sendEventEmail($event);
             }
 
         } else {
+            Log::debug("Failed creating event");
             $resp['msg'] = 'Failed creating event';
             $resp['error'] = 1;
             $resp['success'] = 0;
@@ -182,7 +185,7 @@ class CustomerEventsController extends Controller
         //$event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        if($event->actual_date_time != $actual_date_time){
+        if ($event->actual_date_time != $actual_date_time) {
             $event->actual_date_time = $actual_date_time;
 
             if ($before_ten_mins != "") {
@@ -202,7 +205,7 @@ class CustomerEventsController extends Controller
             }
 
 
-        }else{
+        } else {
             if ($before_ten_mins != "") {
                 $event->before_ten_mins = $before_ten_mins;
             }
@@ -221,7 +224,6 @@ class CustomerEventsController extends Controller
         }
 
         //$event->unique_actual_alarm_id = $unique_alarm_id;
-
 
 
         $event->repeat_sequence = $repeat;
