@@ -60,6 +60,7 @@ Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-ent
 Route::post('/users/my-health/service-request', 'CustomerServiceRequestController@create');
 Route::get('/users/my-health/service-request', 'CustomerServiceRequestController@getServices');
 Route::get('/users/my-health/service-customer', 'CustomerServiceRequestController@getServiceCustomer');
+Route::post('/users/my-health/service-request/cancel', 'CustomerServiceRequestController@cancelServiceRequest');
 
 //Medications
 Route::get('/medicines', 'MedicationsController@getMedicationList');

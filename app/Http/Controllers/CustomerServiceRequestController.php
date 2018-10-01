@@ -6,6 +6,7 @@ use App\EmailHandler\EmailHandlerFactory;
 use App\Mail\ServiceRequestMail;
 use App\ServiceRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CustomerServiceRequestController extends Controller
@@ -30,6 +31,7 @@ class CustomerServiceRequestController extends Controller
         $serviceRequest->set_date = $year . '-' . $month . '-' . $day;;
         $serviceRequest->set_time = $hour . ':' . $minute;
         $serviceRequest->location = $location;
+        $serviceRequest->is_cancelled = 0;
 
         if ($serviceRequest->save()) {
             $this->sendServiceRequestEmail($serviceRequest);
@@ -81,6 +83,50 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
+    function cancelServiceRequest(Request $request)
+    {
+        $resp = array();
+        $service_request_id = $request->input('service_request_id');
+
+        $service = ServiceRequest::find($service_request_id);
+
+        if ($service) {
+            if ($service->is_cancelled == 1) {
+                Log::info('Service request ' . $service->customer . ': '
+                    . $service->service_type . ' already cancelled');
+                $resp['msg'] = 'Service already cancelled';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            } else {
+                $service->is_cancelled = 1;
+
+                if ($service->save()) {
+                    Log::info('Cancelled service request ' . $service->customer
+                        . ': ' . $service->service_type);
+                    $resp['msg'] = 'Service cancelled';
+                    $resp['error'] = 0;
+                    $resp['success'] = 1;
+
+                    $this->sendServiceRequestCancelEmail($service);
+
+                } else {
+                    Log::debug('Failed cancelling service request ' . $service->customer . ': '
+                        . $service->service_type);
+                    $resp['msg'] = 'Failed cancelling service';
+                    $resp['error'] = 2;
+                    $resp['success'] = 0;
+                }
+            }
+        } else {
+            Log::debug('Service request with id ' . $service_request_id . ' not found');
+            $resp['msg'] = 'Service not found';
+            $resp['error'] = 3;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
     function getServiceCustomer()
     {
         $service = ServiceRequest::find(13);
@@ -91,5 +137,12 @@ class CustomerServiceRequestController extends Controller
     {
         $emailHandler = EmailHandlerFactory::createEmailHandler();
         $emailHandler->sendServiceRequestEmail($service);
+    }
+
+
+    private function sendServiceRequestCancelEmail($service)
+    {
+        $emailHandler = EmailHandlerFactory::createEmailHandler();
+        $emailHandler->sendServiceRequestCancelEmail($service);
     }
 }

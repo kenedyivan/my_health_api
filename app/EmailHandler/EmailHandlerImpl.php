@@ -11,6 +11,7 @@ namespace App\EmailHandler;
 
 use App\Mail\EventCancelMail;
 use App\Mail\EventMail;
+use App\Mail\ServiceRequestCancelMail;
 use App\Mail\ServiceRequestMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -31,7 +32,7 @@ class EmailHandlerImpl implements iEmailHandler
     public function sendServiceRequestEmail($service)
     {
         try {
-            Log::info("Sent service email to recipient address " . $this->receipient);
+            Log::info("Sent service email to recipient handler address " . $this->receipient);
             Mail::to($this->receipient)->send(new ServiceRequestMail($service));
 
         } catch (\Exception $e) {
@@ -42,13 +43,21 @@ class EmailHandlerImpl implements iEmailHandler
 
     public function sendServiceRequestCancelEmail($service)
     {
-        // TODO: Implement sendServiceRequestCancelEmail() method.
+        try {
+            Log::info("Sent cancel service " . $service->service_type
+                . " email to recipient handler address " . $this->receipient);
+            Mail::to($this->receipient)->send(new ServiceRequestCancelMail($service));
+
+        } catch (\Exception $e) {
+            // Error sending mail
+            Log::debug($e->getMessage());
+        }
     }
 
     public function sendAppointmentEmail($event)
     {
         try {
-            Log::info("Sent appointment email to recipient address " . $this->receipient);
+            Log::info("Sent appointment email to recipient handler address " . $this->receipient);
             Mail::to($this->receipient)->send(new EventMail($event));
         } catch (\Exception $e) {
             //Error sending mail
@@ -61,7 +70,7 @@ class EmailHandlerImpl implements iEmailHandler
     {
         try {
             Log::info("Sent cancel appointment '.$event->title.
-            ' email to recipient address " . $this->receipient);
+            ' email to recipient handler address " . $this->receipient);
             Mail::to($this->receipient)->send(new EventCancelMail($event));
         } catch (\Exception $e) {
             //Error sending mail

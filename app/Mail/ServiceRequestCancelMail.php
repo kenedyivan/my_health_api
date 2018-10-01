@@ -31,7 +31,7 @@ class ServiceRequestCancelMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Service request ' . '#' . $this->service->service_request_id)
+        return $this->subject('Cancelled Service request ' . '#' . $this->service->service_request_id)
             ->view('cancel_service_request_mail')->with([
                 'customer_name' => $this->service->customer->first_name . ' ' . $this->service->customer->last_name,
                 'phone_number' => $this->service->customer->phone_number,
