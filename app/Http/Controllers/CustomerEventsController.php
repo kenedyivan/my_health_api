@@ -284,7 +284,7 @@ class CustomerEventsController extends Controller
         return $resp;
     }
 
-
+    //Gest events for customer with 
     function getEventsList(Request $request)
     {
         //Get the customer id
@@ -328,6 +328,49 @@ class CustomerEventsController extends Controller
         }
 
         return json_encode($resp);
+    }
+
+    // Gets events for admin client
+    function getAllEventsList(Request $request)
+    {
+        //Create an array object to hold the events
+        $eventList = array();
+
+        //Query the database given the customer id
+        $events = Event::all();
+
+        //check if the events are available
+        if ($events->count() < 1) {
+            $resp['msg'] = 'No events found';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        } else {
+            //Events are available
+            foreach ($events as $event) {
+                $ev = [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'note' => $event->note,
+                    'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
+                    'actual_date_time' => $event->actual_date_time,
+                    'unique_before_alarm_id' => $event->unique_before_alarm_id,
+                    'before_date_time' => $event->before_date_time,
+                    'repeat' => $event->repeat_sequence,
+                    'location' => $event->location,
+                    'event_type' => $event->event_type->event_type,
+                    'customer' => $event->customer->username,
+                ];
+
+                array_push($eventList, $ev);
+            }
+
+            $resp['msg'] = 'Events list';
+            $resp['events'] = $eventList;
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }
+
+        return $resp;
     }
 
     function showEvent(Request $request)

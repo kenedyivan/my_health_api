@@ -174,4 +174,36 @@ class UserRegistrationController extends Controller
 
     }
 
+    //Gets users for Admin client
+    function getAllUsers(){
+        $users = AppUser::all();
+        $resp = array();
+        if($users->count() > 0){
+            $userArray = array();
+            foreach ($users as $user) {
+                $userObject = array();
+                $userObject["id"] = $user->customer_id;
+                $userObject["aar_id"] = $user->aar_id;
+                $userObject["first_name"] = $user->first_name;
+                $userObject["last_name"] = $user->last_name;
+                $userObject["username"] = $user->username;
+                $userObject["email_address"] = $user->email_address;
+                $userObject["phone_number"] = $user->phone_number;
+                $userObject["created_at"] = $user->created_at;
+
+                array_push($userArray, $userObject);
+            }
+            $resp["users"] = $userArray;
+            $resp['msg'] = 'Found users';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        }else{
+            $resp['msg'] = 'Found no users';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
 }

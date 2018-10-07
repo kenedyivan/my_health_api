@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,21 +18,20 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
-//Users routes
 Route::post('/users/login', 'UserLoginController@login');
 Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/update', 'UserRegistrationController@update');
-Route::post('/users/update-password', 'UserRegistrationController@updatePassword');
+Route::get('/users/admin', 'UserRegistrationController@getAllUsers');
 
 //Events
 Route::post('/users/events', 'CustomerEventsController@createEvent');
+Route::get('/users/events/admin', 'CustomerEventsController@getAllEventsList');
 Route::get('/users/events', 'CustomerEventsController@getEventsList');
 Route::get('/users/event', 'CustomerEventsController@showEvent');
 Route::post('/users/register/fcm-device-token', 'FCMTokenController@updateDeviceToken');
 Route::get('/users/register/send-message/{message}', 'FCMTokenController@sendMessage');
 Route::get('/users/events/broadcast', 'CustomerEventsController@eventsBroadcast');
 Route::get('/users/events/delete', 'CustomerEventsController@delete');
-Route::post('/users/events/cancel', 'CustomerEventsController@cancelEvent');
 Route::post('/users/events/update', 'CustomerEventsController@updateEvent');
 Route::post('/users/events/comment', 'CustomerEventsController@saveComment');
 
@@ -59,8 +57,8 @@ Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-ent
 //Service Request
 Route::post('/users/my-health/service-request', 'CustomerServiceRequestController@create');
 Route::get('/users/my-health/service-request', 'CustomerServiceRequestController@getServices');
+Route::get('/users/my-health/service-request/admin', 'CustomerServiceRequestController@getServicesAdmin');
 Route::get('/users/my-health/service-customer', 'CustomerServiceRequestController@getServiceCustomer');
-Route::post('/users/my-health/service-request/cancel', 'CustomerServiceRequestController@cancelServiceRequest');
 
 //Medications
 Route::get('/medicines', 'MedicationsController@getMedicationList');

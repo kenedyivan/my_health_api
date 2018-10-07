@@ -47,6 +47,7 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
+    //Gest service requests for customer android client
     function getServices(Request $request)
     {
         $customer_id = $request->input('customer_id');
@@ -76,6 +77,41 @@ class CustomerServiceRequestController extends Controller
             $resp['success'] = 1;
         } else {
             $resp['msg'] = 'Failed retrieving services';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
+    //Gets service requests for admin client
+    function getServicesAdmin(Request $request)
+    {
+        $resp = array();
+
+        $services = ServiceRequest::all();
+
+        if ($services->count() > 0) {
+            $servicesArray = array();
+            foreach ($services as $service) {
+                $serviceObject = array();
+                $serviceObject["id"] = $service->service_request_id;
+                $serviceObject["service_type"] = $service->service_type;
+                $serviceObject["set_date"] = $service->set_date;
+                $serviceObject["set_time"] = $service->set_time;
+                $serviceObject["location"] = $service->location;
+                $serviceObject["customer"] = $service->customer->username;
+                $serviceObject["phone_number"] = $service->customer->phone_number;
+
+                array_push($servicesArray, $serviceObject);
+            }
+
+            $resp["services"] = $servicesArray;
+            $resp['msg'] = 'Found services';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        } else {
+            $resp['msg'] = 'No services found';
             $resp['error'] = 1;
             $resp['success'] = 0;
         }
