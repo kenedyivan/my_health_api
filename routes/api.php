@@ -49,10 +49,14 @@ Route::post('/users/my-health/illnesses/medication/edit', 'CustomerMedicationsCo
 Route::get('/users/my-health/illnesses/medication/delete', 'CustomerMedicationsController@delete');
 
 //Alarms
-Route::post('/users/my-health/illnesses/medication/alarm-entries', 'CustomerAlarmEntriesController@createAlarmEntry');
-Route::get('/users/my-health/illnesses/medication/alarm-entries', 'CustomerAlarmEntriesController@getCustomerAlarmEntries');
-Route::get('/users/my-health/illnesses/medication/customer-medication-alarm-entries', 'CustomerAlarmEntriesController@getCustomerMedicationAlarmEntry');
-Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-entries/update', 'CustomerAlarmEntriesController@updateAlarmEntry');
+Route::post('/users/my-health/illnesses/medication/alarm-entries',
+    'CustomerAlarmEntriesController@createAlarmEntry');
+Route::get('/users/my-health/illnesses/medication/alarm-entries',
+    'CustomerAlarmEntriesController@getCustomerAlarmEntries');
+Route::get('/users/my-health/illnesses/medication/customer-medication-alarm-entries',
+    'CustomerAlarmEntriesController@getCustomerMedicationAlarmEntry');
+Route::post('/users/my-health/illnesses/medication/customer-medication-alarm-entries/update',
+    'CustomerAlarmEntriesController@updateAlarmEntry');
 
 //Service Request
 Route::post('/users/my-health/service-request', 'CustomerServiceRequestController@create');
@@ -69,6 +73,15 @@ Route::get('/send-mail', 'SendServiceEmailController@sendEmail');
 
 //Page data
 Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');
+
+//Admin Health facilities
+Route::get('/users/my-health/health-facilities', 'HealthFacilitiesController@getHealthFacilities');
+
+//Admin Illness data
+Route::get('/users/my-health/illnesses', 'IllnessDataController@getIllnessData');
+
+//Admin allergy data
+Route::get('/users/my-health/allergies', 'AllergyDataController@getAllergiesData');
 
 
 Route::get('date', function () {
