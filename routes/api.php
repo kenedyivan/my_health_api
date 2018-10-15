@@ -74,6 +74,7 @@ Route::get('/send-mail', 'SendServiceEmailController@sendEmail');
 //Page data
 Route::get('/users/my-health/page-data', 'PageDataController@getHospitals');
 
+/*------------------------------------------------------Admin routes---------------------------------------------------*/
 //Admin Health facilities
 Route::get('/users/my-health/health-facilities', 'HealthFacilitiesController@getHealthFacilities');
 
@@ -82,6 +83,10 @@ Route::get('/users/my-health/illnesses', 'IllnessDataController@getIllnessData')
 
 //Admin allergy data
 Route::get('/users/my-health/allergies', 'AllergyDataController@getAllergiesData');
+
+//Admin
+Route::post('/admin/login', 'AdminLoginController@login');
+
 
 
 Route::get('date', function () {
