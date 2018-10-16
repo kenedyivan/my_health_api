@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Allergy;
+use App\AllergyMedication;
+use Illuminate\Http\Request;
+
+class CustomerAllergyMedicationsController extends Controller
+{
+    function getAllergyMedications($userId, $allergyId)
+    {
+        $resp = array();
+
+        $customer_allergy_id = $allergyId;
+
+        if ($customer_allergy_id >= 1) {
+
+            $allergy = Allergy::find($customer_allergy_id);
+
+            if ($allergy) {
+
+                if ($allergy->medications->count() > 0) {
+                    $medications = array();
+                    foreach ($allergy->medications as $medication) {
+                        $med_array = array();
+                        $med_array['medication_id'] = $medication->allergy_medication_id;
+                        $med_array['drug_name'] = $medication->drug_name;
+                        $med_array['frequency'] = $medication->frequency;
+                        $med_array['notes'] = $medication->notes;
+                        $med_array['set_time'] = $medication->set_time;
+                        $med_array['days'] = $medication->days_frequency;
+                        array_push($medications, $med_array);
+                    }
+
+                    $resp['msg'] = 'Allergy medications';
+                    $resp['error'] = 0;
+                    $resp['success'] = 1;
+                    $resp['medications'] = $medications;
+                } else {
+                    $resp['msg'] = 'No medications found';
+                    $resp['error'] = 1;
+                    $resp['success'] = 0;
+                }
+
+            } else {
+                $resp['msg'] = 'Allergy with Id ' . $customer_allergy_id . ' not found';
+                $resp['error'] = 2;
+                $resp['success'] = 0;
+            }
+
+        } else {
+            $resp['msg'] = 'Invalid allergy id';
+            $resp['error'] = 2;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+
+    }
+
+    function saveAllergyMedication(Request $request, $userId, $allergyId)
+    {
+        $resp = array();
+
+        $customer_allergy_id = $request->input('customer_allergy_id');
+        $drug_name = $request->input('drug_name');
+        $frequency = $request->input('frequency');
+        $notes = $request->input('notes');
+        $set_time = $request->input('set_time');
+        $days_frequency = $request->input('days_frequency');
+
+        if ($customer_allergy_id == '') {
+            $resp['msg'] = 'Customer allergy id cannot be empty';
+            $resp['error'] = 45;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($drug_name == '') {
+            $resp['msg'] = 'Drug name cannot be empty';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($frequency == '') {
+            $resp['msg'] = 'Frequency cannot be empty';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($notes == '') {
+            $resp['msg'] = 'Notes cannot be empty';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($set_time == '') {
+            $resp['msg'] = 'Set time cannot be empty';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($days_frequency == '') {
+            $resp['msg'] = 'Days frequency cannot be empty';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+            return $resp;
+        }
+
+        if ($allergyId >= 1) {
+
+            $allergy = Allergy::find($allergyId);
+
+            if ($allergy) {
+
+                $medication = new AllergyMedication();
+                $medication->customer_allergy_id = $customer_allergy_id;
+                $medication->drug_name = $drug_name;
+                $medication->frequency = $frequency;
+                $medication->notes = $notes;
+                $medication->set_time = $set_time;
+                $medication->days_frequency = $days_frequency;
+
+                if ($medication->save()) {
+
+                    $resp['msg'] = 'Medication added successfully';
+
+                    $resp['data'] = [
+                        'medication_id' => $medication->allergy_medication_id,
+                        'allergy_id' => $medication->customer_allergy_id,
+                        'drug_name' => $medication->drug_name,
+                        'frequency' => $medication->frequency,
+                        'notes' => $medication->notes,
+                        'set_time' => $medication->set_time,
+                        'days' => $medication->days_frequency
+                    ];
+
+                    $resp['error'] = 0;
+                    $resp['success'] = 1;
+                } else {
+                    $resp['msg'] = 'Adding failed';
+                    $resp['error'] = 1;
+                    $resp['success'] = 0;
+                }
+            } else {
+                $resp['msg'] = 'Allergy with id ' . $allergyId . ' not found';
+                $resp['error'] = 2;
+                $resp['success'] = 0;
+            }
+
+        } else {
+            $resp['msg'] = 'Invalid allergy id';
+            $resp['error'] = 3;
+            $resp['success'] = 0;
+        }
+
+
+        return $resp;
+    }
+}

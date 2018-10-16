@@ -120,15 +120,12 @@ Route::post('/users/{userId}/customer-illnesses/{id}/update', 'CustomerIllnesses
 //Delete customer illness
 Route::get('/users/{userId}/customer-illnesses/{id}/delete', 'CustomerIllnessesController@deleteCustomerIllness');
 
+/*----------Medications-----------------------------*/
+//Customer allergy medications
+Route::get('/users/{userId}/customer-allergies/{allergyId}/medications',
+    'CustomerAllergyMedicationsController@getAllergyMedications');
 
-Route::get('date', function () {
+//Create customer allergy medication
+Route::post('/users/{userId}/customer-allergies/{allergyId}/medications',
+    'CustomerAllergyMedicationsController@saveAllergyMedication');
 
-    ///$startDate = time();
-    $startDate = strtotime('2018-07-17 20:20:00');
-    return date('Y-m-d H:i:s', strtotime('+1 day', $startDate));
-
-});
-
-Route::get('/test-logging', function(){
-	Log::debug('Logging test message.');
-});
