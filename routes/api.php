@@ -88,9 +88,9 @@ Route::get('/users/my-health/allergies', 'AllergyDataController@getAllergiesData
 Route::post('/admin/login', 'AdminLoginController@login');
 
 //Customer profile
-Route::get('/users/{userId}customer-profile', 'CustomerProfileController@getCustomerProfile');
+Route::get('/users/{userId}/customer-profile', 'CustomerProfileController@getCustomerProfile');
 
-//Customer allergy
+//Customer allergies
 Route::get('/users/{userId}/customer-allergies', 'CustomerAllergiesController@getCustomerAllergies');
 
 //Show customer allergy
@@ -100,10 +100,25 @@ Route::get('/users/{userId}/customer-allergies/{id}', 'CustomerAllergiesControll
 Route::post('/users/{userId}/customer-allergies/', 'CustomerAllergiesController@saveCustomerAllergy');
 
 //Update customer allergy
-Route::post('/users/{userId}customer-allergies/{id}/update', 'CustomerAllergiesController@updateCustomerAllergy');
+Route::post('/users/{userId}/customer-allergies/{id}/update', 'CustomerAllergiesController@updateCustomerAllergy');
 
 //Delete customer allergy
-Route::get('/users/{userId}customer-allergies/{id}/delete', 'CustomerAllergiesController@deleteCustomerAllergy');
+Route::get('/users/{userId}/customer-allergies/{id}/delete', 'CustomerAllergiesController@deleteCustomerAllergy');
+
+//Customer illnesses
+Route::get('/users/{userId}/customer-illnesses', 'CustomerIllnessesController@getCustomerIllnesses');
+
+//Show customer illness
+Route::get('/users/{userId}/customer-illnesses/{id}', 'CustomerIllnessesController@showCustomerIllness');
+
+//Create customer illness
+Route::post('/users/{userId}/customer-illnesses/', 'CustomerIllnessesController@saveCustomerIllness');
+
+//Update customer illness
+Route::post('/users/{userId}/customer-illnesses/{id}/update', 'CustomerIllnessesController@updateCustomerIllness');
+
+//Delete customer illness
+Route::get('/users/{userId}/customer-illnesses/{id}/delete', 'CustomerIllnessesController@deleteCustomerIllness');
 
 
 Route::get('date', function () {

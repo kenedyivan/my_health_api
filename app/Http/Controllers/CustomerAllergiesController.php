@@ -16,34 +16,43 @@ class CustomerAllergiesController extends Controller
 
         if ($customer_id >= 1) {
             if ($user) {
-                $resp['msg'] = 'Customer allergies';
 
-                $allergiesList = array();
-                foreach ($user->allergies as $allergy) {
-                    $al = array();
-                    $al["id"] = $allergy->customer_allergy_id;
-                    $al["disease"] = $allergy->allergy_type->al_name;
-                    $al["diagnosis"] = $allergy->diagnosis;
-                    $al["t_date"] = $allergy->t_date;
-                    $al["notes"] = $allergy->notes;
-                    $al["created_at"] = $allergy->created_at;
+                if ($user->allergies->count() > 0) {
+                    $resp['msg'] = 'Customer allergies';
 
-                    array_push($allergiesList, $al);
+                    $allergiesList = array();
+
+                    foreach ($user->allergies as $allergy) {
+                        $al = array();
+                        $al["id"] = $allergy->customer_allergy_id;
+                        $al["disease"] = $allergy->allergy_type->al_name;
+                        $al["diagnosis"] = $allergy->diagnosis;
+                        $al["t_date"] = $allergy->t_date;
+                        $al["notes"] = $allergy->notes;
+                        $al["created_at"] = $allergy->created_at;
+
+                        array_push($allergiesList, $al);
+                    }
+                    $resp['allergies'] = $allergiesList;
+
+                    $resp['error'] = 0;
+                    $resp['success'] = 1;
+                } else {
+                    $resp['msg'] = 'No allergies found';
+                    $resp['error'] = 1;
+                    $resp['success'] = 0;
                 }
-                $resp['allergies'] = $allergiesList;
 
-                $resp['error'] = 0;
-                $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Customer with Id ' . $customer_id . ' not found';
-                $resp['error'] = 0;
-                $resp['success'] = 1;
+                $resp['error'] = 2;
+                $resp['success'] = 0;
             }
 
         } else {
             $resp['msg'] = 'Invalid customer id';
-            $resp['error'] = 0;
-            $resp['success'] = 1;
+            $resp['error'] = 3;
+            $resp['success'] = 0;
         }
 
         return $resp;
@@ -57,16 +66,8 @@ class CustomerAllergiesController extends Controller
 
         if ($customer_allergy_id >= 1) {
             if ($allergy) {
-                $al["id"] = $allergy->customer_allergy_id;
-                $al["allergy_type_id"] = $allergy->allergy_type_id;
-                $al["allergy"] = $allergy->allergy_type->al_name;
-                $al["diagnosis"] = $allergy->diagnosis;
-                $al["t_date"] = $allergy->t_date;
-                $al["notes"] = $allergy->notes;
-                $al["created_at"] = $allergy->created_at;
 
-
-                $resp['msg'] = 'Allergies list';
+                $resp['msg'] = 'Allergy data';
                 $resp['allergy'] = [
                     "id" => $allergy->customer_allergy_id,
                     "disease" => $allergy->allergy_type->al_name,
@@ -79,13 +80,13 @@ class CustomerAllergiesController extends Controller
                 $resp['success'] = 1;
             } else {
                 $resp['msg'] = 'Allergy with Id ' . $id . ' not found';
-                $resp['error'] = 2;
+                $resp['error'] = 1;
                 $resp['success'] = 0;
 
             }
         } else {
             $resp['msg'] = 'Invalid allergy Id';
-            $resp['error'] = 3;
+            $resp['error'] = 2;
             $resp['success'] = 0;
         }
 
@@ -162,19 +163,19 @@ class CustomerAllergiesController extends Controller
                     $resp['success'] = 1;
                 } else {
                     $resp['msg'] = 'Failed creating customer allergy';
-                    $resp['error'] = 2;
+                    $resp['error'] = 1;
                     $resp['success'] = 0;
                 }
             } else {
                 $resp['msg'] = 'Customer with Id ' . $customer_id . ' not found';
-                $resp['error'] = 3;
-                $resp['success'] = 1;
+                $resp['error'] = 2;
+                $resp['success'] = 0;
             }
 
         } else {
             $resp['msg'] = 'Invalid customer id';
-            $resp['error'] = 4;
-            $resp['success'] = 1;
+            $resp['error'] = 3;
+            $resp['success'] = 0;
         }
 
 

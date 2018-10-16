@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 
 class CustomerProfileController extends Controller
 {
-    function getCustomerProfile(Request $request){
-        $customer_id = $request->input('customer_id');
+    function getCustomerProfile($userId){
+        $customer_id = $userId;
 
         $user = AppUser::find($customer_id);
         $resp = array();
