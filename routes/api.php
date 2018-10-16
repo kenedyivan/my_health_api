@@ -36,11 +36,11 @@ Route::post('/users/events/update', 'CustomerEventsController@updateEvent');
 Route::post('/users/events/comment', 'CustomerEventsController@saveComment');
 
 //Illnesses and Allergies
-Route::get('/users/my-health/illnesses', 'CustomerIllnessesController@getIllnesses');
-Route::post('/users/my-health/illnesses/create', 'CustomerIllnessesController@createIllness');
-Route::post('/users/my-health/illnesses/update', 'CustomerIllnessesController@update');
-Route::get('/users/my-health/illnesses/show', 'CustomerIllnessesController@show');
-Route::get('/users/my-health/illnesses/delete', 'CustomerIllnessesController@delete');
+Route::get('/users/my-health/illnesses', 'CustomerIllnessesControllerOrig@getIllnesses');
+Route::post('/users/my-health/illnesses/create', 'CustomerIllnessesControllerOrig@createIllness');
+Route::post('/users/my-health/illnesses/update', 'CustomerIllnessesControllerOrig@update');
+Route::get('/users/my-health/illnesses/show', 'CustomerIllnessesControllerOrig@show');
+Route::get('/users/my-health/illnesses/delete', 'CustomerIllnessesControllerOrig@delete');
 
 //Medication
 Route::post('/users/my-health/illnesses/medication', 'CustomerMedicationsController@save');
@@ -87,6 +87,23 @@ Route::get('/users/my-health/allergies', 'AllergyDataController@getAllergiesData
 //Admin
 Route::post('/admin/login', 'AdminLoginController@login');
 
+//Customer profile
+Route::get('/users/{userId}customer-profile', 'CustomerProfileController@getCustomerProfile');
+
+//Customer allergy
+Route::get('/users/{userId}/customer-allergies', 'CustomerAllergiesController@getCustomerAllergies');
+
+//Show customer allergy
+Route::get('/users/{userId}/customer-allergies/{id}', 'CustomerAllergiesController@showCustomerAllergy');
+
+//Create customer allergy
+Route::post('/users/{userId}/customer-allergies/', 'CustomerAllergiesController@saveCustomerAllergy');
+
+//Update customer allergy
+Route::post('/users/{userId}customer-allergies/{id}/update', 'CustomerAllergiesController@updateCustomerAllergy');
+
+//Delete customer allergy
+Route::get('/users/{userId}customer-allergies/{id}/delete', 'CustomerAllergiesController@deleteCustomerAllergy');
 
 
 Route::get('date', function () {
