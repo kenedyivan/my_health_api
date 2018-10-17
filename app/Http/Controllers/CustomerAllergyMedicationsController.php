@@ -183,7 +183,7 @@ class CustomerAllergyMedicationsController extends Controller
                     $resp['error'] = 0;
                     $resp['success'] = 1;
                 } else {
-                    $resp['msg'] = 'Adding failed';
+                    $resp['msg'] = 'Adding medication failed';
                     $resp['error'] = 1;
                     $resp['success'] = 0;
                 }

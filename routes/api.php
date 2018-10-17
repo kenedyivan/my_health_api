@@ -84,8 +84,20 @@ Route::get('/users/my-health/illnesses', 'IllnessDataController@getIllnessData')
 //Admin allergy data
 Route::get('/users/my-health/allergies', 'AllergyDataController@getAllergiesData');
 
+/*----------Admin auth route-------*/
 //Admin
 Route::post('/admin/login', 'AdminLoginController@login');
+
+/*----------End admin auth route---------*/
+
+/*---------- Admin user routes------*/
+Route::get('/admins', 'AdminsController@getAdminUsers');
+Route::get('/admins/{adminId}', 'AdminsController@showAdminUser');
+Route::post('/admins', 'AdminsController@saveAdminUser');
+Route::post('/admins/{adminId}/update', 'AdminsController@updateAdminUser');
+Route::get('/admins/{adminId}/delete', 'AdminsController@deleteAdminUser');
+
+/*-----------End admin user routes---------*/
 
 //Customer profile
 Route::get('/users/{userId}/customer-profile', 'CustomerProfileController@getCustomerProfile');
