@@ -15,7 +15,9 @@ class CustomerProfileController extends Controller
         if($user){
             $resp['msg'] = 'Customer profile data';
             $resp['id'] = $user->customer_id;
-            $resp['user'] = ['first_name' => $user->first_name,
+            $resp['user'] = [
+                'id' => $user->customer_id,
+                'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'username' => $user->username,
                 'aar_id' => $user->aar_id,
