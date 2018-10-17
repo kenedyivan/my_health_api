@@ -115,17 +115,51 @@ Route::get('/users/{userId}/customer-illnesses/{id}', 'CustomerIllnessesControll
 Route::post('/users/{userId}/customer-illnesses/', 'CustomerIllnessesController@saveCustomerIllness');
 
 //Update customer illness
-Route::post('/users/{userId}/customer-illnesses/{id}/update', 'CustomerIllnessesController@updateCustomerIllness');
+Route::post('/users/{userId}/customer-illnesses/{id}/update',
+    'CustomerIllnessesController@updateCustomerIllness');
 
 //Delete customer illness
-Route::get('/users/{userId}/customer-illnesses/{id}/delete', 'CustomerIllnessesController@deleteCustomerIllness');
+Route::get('/users/{userId}/customer-illnesses/{id}/delete',
+    'CustomerIllnessesController@deleteCustomerIllness');
 
 /*----------Medications-----------------------------*/
 //Customer allergy medications
 Route::get('/users/{userId}/customer-allergies/{allergyId}/medications',
     'CustomerAllergyMedicationsController@getAllergyMedications');
 
+//Show customer allergy medication
+Route::get('/users/{userId}/customer-allergies/{allergyId}/medications/{medicationId}',
+    'CustomerAllergyMedicationsController@showAllergyMedication');
+
 //Create customer allergy medication
 Route::post('/users/{userId}/customer-allergies/{allergyId}/medications',
     'CustomerAllergyMedicationsController@saveAllergyMedication');
 
+//Update customer allergy medication
+Route::post('/users/{userId}/customer-allergies/{allergyId}/medications/{medicationId}/update',
+    'CustomerAllergyMedicationsController@updateAllergyMedication');
+
+//Delete customer allergy medication
+Route::get('/users/{userId}/customer-allergies/{allergyId}/medications/{medicationId}/delete',
+    'CustomerAllergyMedicationsController@deleteAllergyMedication');
+
+/*--Illness medication routes*/
+//Customer illness medications
+Route::get('/users/{userId}/customer-illnesses/{illnessId}/medications',
+    'CustomerIllnessMedicationsController@getIllnessMedications');
+
+//Show customer illness medication
+Route::get('/users/{userId}/customer-illnesses/{illnessId}/medications/{medicationId}',
+    'CustomerIllnessMedicationsController@showIllnessMedication');
+
+//Create customer illness medication
+Route::post('/users/{userId}/customer-illnesses/{illnessId}/medications',
+    'CustomerIllnessMedicationsController@saveIllnessMedication');
+
+//Update customer illness medication
+Route::post('/users/{userId}/customer-illnesses/{illnessId}/medications/{medicationId}/update',
+    'CustomerIllnessMedicationsController@updateIllnessMedication');
+
+//Delete customer illness medication
+Route::get('/users/{userId}/customer-illnesses/{illnessId}/medications/{medicationId}/delete',
+    'CustomerIllnessMedicationsController@deleteIllnessMedication');

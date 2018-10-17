@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Allergy;
-use App\AllergyMedication;
+use App\Illness;
+use App\IllnessMedication;
 use Illuminate\Http\Request;
 
-class CustomerAllergyMedicationsController extends Controller
+class CustomerIllnessMedicationsController extends Controller
 {
-    function getAllergyMedications($userId, $allergyId)
+    function getIllnessMedications($userId, $illnessId)
     {
         $resp = array();
 
-        $customer_allergy_id = $allergyId;
+        $customer_illness_id = $illnessId;
 
-        if ($customer_allergy_id >= 1) {
+        if ($customer_illness_id >= 1) {
 
-            $allergy = Allergy::find($customer_allergy_id);
+            $illness = Illness::find($customer_illness_id);
 
-            if ($allergy) {
+            if ($illness) {
 
-                if ($allergy->medications->count() > 0) {
+                if ($illness->medications->count() > 0) {
                     $medications = array();
-                    foreach ($allergy->medications as $medication) {
+                    foreach ($illness->medications as $medication) {
                         $med_array = array();
-                        $med_array['medication_id'] = $medication->allergy_medication_id;
+                        $med_array['medication_id'] = $medication->illness_medication_id;
                         $med_array['drug_name'] = $medication->drug_name;
                         $med_array['frequency'] = $medication->frequency;
                         $med_array['notes'] = $medication->notes;
@@ -33,7 +33,7 @@ class CustomerAllergyMedicationsController extends Controller
                         array_push($medications, $med_array);
                     }
 
-                    $resp['msg'] = 'Allergy medications';
+                    $resp['msg'] = 'Illness medications';
                     $resp['error'] = 0;
                     $resp['success'] = 1;
                     $resp['medications'] = $medications;
@@ -44,13 +44,13 @@ class CustomerAllergyMedicationsController extends Controller
                 }
 
             } else {
-                $resp['msg'] = 'Allergy with Id ' . $customer_allergy_id . ' not found';
+                $resp['msg'] = 'Illness with Id ' . $customer_illness_id . ' not found';
                 $resp['error'] = 2;
                 $resp['success'] = 0;
             }
 
         } else {
-            $resp['msg'] = 'Invalid allergy id';
+            $resp['msg'] = 'Invalid illness id';
             $resp['error'] = 2;
             $resp['success'] = 0;
         }
@@ -59,22 +59,23 @@ class CustomerAllergyMedicationsController extends Controller
 
     }
 
-    function showAllergyMedication($userId, $allergyId, $medicationId){
+    function showIllnessMedication($userId, $illnessId, $medicationId)
+    {
         $resp = array();
 
-        if($medicationId >= 1){
-            $medications = AllergyMedication::where('customer_allergy_id', $allergyId)
-                ->where('allergy_medication_id', $medicationId)->take(1)->get();
+        if ($medicationId >= 1) {
 
+            $medications = IllnessMedication::where('customer_illness_id', $illnessId)
+                ->where('illness_medication_id', $medicationId)->take(1)->get();
             if ($medications->count() > 0) {
 
                 $medication = $medications[0];
 
-                $resp['msg'] = 'Allergy medication data';
+                $resp['msg'] = 'Illness medication data';
 
                 $resp['data'] = [
-                    'medication_id' => $medication->allergy_medication_id,
-                    'allergy_id' => $medication->customer_allergy_id,
+                    'medication_id' => $medication->illness_medication_id,
+                    'illness_id' => $medication->customer_illness_id,
                     'drug_name' => $medication->drug_name,
                     'frequency' => $medication->frequency,
                     'notes' => $medication->notes,
@@ -84,13 +85,13 @@ class CustomerAllergyMedicationsController extends Controller
 
                 $resp['error'] = 0;
                 $resp['success'] = 1;
-            }else{
-                $resp['msg'] = 'Allergy medication with id ' . $medicationId . ' for allergy with id '.$allergyId.' not found';
+            } else {
+                $resp['msg'] = 'Illness medication with id ' . $medicationId . ' for illness with id '.$illnessId.' not found';
                 $resp['error'] = 2;
                 $resp['success'] = 0;
             }
-        }else{
-            $resp['msg'] = 'Invalid allergy medication id';
+        } else {
+            $resp['msg'] = 'Invalid illness medication id';
             $resp['error'] = 3;
             $resp['success'] = 0;
         }
@@ -98,20 +99,19 @@ class CustomerAllergyMedicationsController extends Controller
         return $resp;
     }
 
-
-    function saveAllergyMedication(Request $request, $userId, $allergyId)
+    function saveIllnessMedication(Request $request, $userId, $illnessId)
     {
         $resp = array();
 
-        $customer_allergy_id = $request->input('customer_allergy_id');
+        $customer_illness_id = $request->input('customer_illness_id');
         $drug_name = $request->input('drug_name');
         $frequency = $request->input('frequency');
         $notes = $request->input('notes');
         $set_time = $request->input('set_time');
         $days_frequency = $request->input('days_frequency');
 
-        if ($customer_allergy_id == '') {
-            $resp['msg'] = 'Customer allergy id cannot be empty';
+        if ($customer_illness_id == '') {
+            $resp['msg'] = 'Customer illness id cannot be empty';
             $resp['error'] = 45;
             $resp['success'] = 0;
             return $resp;
@@ -152,14 +152,14 @@ class CustomerAllergyMedicationsController extends Controller
             return $resp;
         }
 
-        if ($allergyId >= 1) {
+        if ($illnessId >= 1) {
 
-            $allergy = Allergy::find($allergyId);
+            $illness = Illness::find($illnessId);
 
-            if ($allergy) {
+            if ($illness) {
 
-                $medication = new AllergyMedication();
-                $medication->customer_allergy_id = $customer_allergy_id;
+                $medication = new IllnessMedication();
+                $medication->customer_illness_id = $customer_illness_id;
                 $medication->drug_name = $drug_name;
                 $medication->frequency = $frequency;
                 $medication->notes = $notes;
@@ -171,8 +171,8 @@ class CustomerAllergyMedicationsController extends Controller
                     $resp['msg'] = 'Medication added successfully';
 
                     $resp['data'] = [
-                        'medication_id' => $medication->allergy_medication_id,
-                        'allergy_id' => $medication->customer_allergy_id,
+                        'medication_id' => $medication->illness_medication_id,
+                        'illness_id' => $medication->customer_illness_id,
                         'drug_name' => $medication->drug_name,
                         'frequency' => $medication->frequency,
                         'notes' => $medication->notes,
@@ -188,13 +188,13 @@ class CustomerAllergyMedicationsController extends Controller
                     $resp['success'] = 0;
                 }
             } else {
-                $resp['msg'] = 'Allergy with id ' . $allergyId . ' not found';
+                $resp['msg'] = 'Illness with id ' . $illnessId . ' not found';
                 $resp['error'] = 2;
                 $resp['success'] = 0;
             }
 
         } else {
-            $resp['msg'] = 'Invalid allergy id';
+            $resp['msg'] = 'Invalid illness id';
             $resp['error'] = 3;
             $resp['success'] = 0;
         }
@@ -203,11 +203,11 @@ class CustomerAllergyMedicationsController extends Controller
         return $resp;
     }
 
-    function updateAllergyMedication(Request $request, $userId, $allergyId, $medicationId)
+    function updateIllnessMedication(Request $request, $userId, $illnessId, $medicationId)
     {
         $resp = array();
 
-        $customer_allergy_id = $request->input('customer_allergy_id');
+        $customer_illness_id = $request->input('customer_illness_id');
         $medication_id = $request->input('medication_id');
         $drug_name = $request->input('drug_name');
         $frequency = $request->input('frequency');
@@ -215,14 +215,14 @@ class CustomerAllergyMedicationsController extends Controller
         $set_time = $request->input('set_time');
         $days_frequency = $request->input('days_frequency');
 
-        if ($allergyId >= 1) {
-            $allergy = Allergy::find($allergyId);
-            if ($allergy) {
+        if ($illnessId >= 1) {
+            $illness = Illness::find($illnessId);
+            if ($illness) {
 
                 if ($medicationId >= 1) {
 
-                    $medications = AllergyMedication::where('customer_allergy_id', $allergyId)
-                        ->where('allergy_medication_id', $medicationId)->take(1)->get();
+                    $medications = IllnessMedication::where('customer_illness_id', $illnessId)
+                        ->where('illness_medication_id', $medicationId)->take(1)->get();
 
                     if ($medications->count() > 0) {
 
@@ -254,22 +254,22 @@ class CustomerAllergyMedicationsController extends Controller
                         }
 
                     } else {
-                        $resp['msg'] = 'Allergy medication with id ' . $medicationId . ' for allergy with id '.$allergyId.' not found';
+                        $resp['msg'] = 'Illness medication with id ' . $medicationId . ' for illness with id '.$illnessId.' not found';
                         $resp['error'] = 2;
                         $resp['success'] = 0;
                     }
                 } else {
-                    $resp['msg'] = 'Invalid allergy medication id';
+                    $resp['msg'] = 'Invalid illness medication id';
                     $resp['error'] = 3;
                     $resp['success'] = 0;
                 }
             } else {
-                $resp['msg'] = 'Allergy with id ' . $allergyId . ' not found';
+                $resp['msg'] = 'Illness with id ' . $illnessId . ' not found';
                 $resp['error'] = 4;
                 $resp['success'] = 0;
             }
         } else {
-            $resp['msg'] = 'Invalid allergy id';
+            $resp['msg'] = 'Invalid illness id';
             $resp['error'] = 5;
             $resp['success'] = 0;
         }
@@ -277,19 +277,18 @@ class CustomerAllergyMedicationsController extends Controller
         return $resp;
     }
 
-    function deleteAllergyMedication($userId, $allergyId, $medicationId){
+    function deleteIllnessMedication($userId, $illnessId, $medicationId){
 
         $resp = array();
 
         if($medicationId >= 1){
 
-            $medications = AllergyMedication::where('customer_allergy_id', $allergyId)
-                ->where('allergy_medication_id', $medicationId)->take(1)->get();
+            $medications = IllnessMedication::where('customer_illness_id', $illnessId)
+                ->where('illness_medication_id', $medicationId)->take(1)->get();
 
             if ($medications->count() > 0) {
 
                 $medication = $medications[0];
-
                 if ($medication->delete()) {
                     $resp['msg'] = 'Deleted';
                     $resp['error'] = 0;
@@ -300,17 +299,19 @@ class CustomerAllergyMedicationsController extends Controller
                     $resp['success'] = 0;
                 }
             }else{
-                $resp['msg'] = 'Allergy medication with id ' . $medicationId . ' for allergy with id '.$allergyId.' not found';
+                $resp['msg'] = 'Illness medication with id ' . $medicationId . ' for illness with id '.$illnessId.' not found';
                 $resp['error'] = 2;
                 $resp['success'] = 0;
             }
 
         }else{
-            $resp['msg'] = 'Invalid allergy medication id';
+            $resp['msg'] = 'Invalid illness medication id';
             $resp['error'] = 3;
             $resp['success'] = 0;
         }
 
         return $resp;
     }
+
+
 }
