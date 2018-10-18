@@ -337,7 +337,7 @@ class CustomerEventsController extends Controller
         $eventList = array();
 
         //Query the database given the customer id
-        $events = Event::all();
+        $events = Event::where('customer_id','<>',0)->get();
 
         //check if the events are available
         if ($events->count() < 1) {
