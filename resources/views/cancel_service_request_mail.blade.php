@@ -12,6 +12,9 @@
 <p>This is a request from {{$customer_name}} who would like <?php echo $article;?> {{$service_type}} on {{$date}} at {{$time}}</p>
 <p>Location: {{$location}}</p>
 <p>Contact: {{$phone_number}}</p>
+<br/>
+
+<h3><span style="color:red"><strong>CANCELLED</strong></span></h3>
 
 <br/>
 <br/>
