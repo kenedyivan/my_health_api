@@ -89,7 +89,7 @@ class CustomerServiceRequestController extends Controller
     {
         $resp = array();
 
-        $services = ServiceRequest::all();
+        $services = ServiceRequest::where('customer_id','<>',0)->get();
 
         if ($services->count() > 0) {
             $servicesArray = array();
