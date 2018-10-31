@@ -23,6 +23,8 @@ class CustomerServiceRequestController extends Controller
         $hour = $request->input('hour');
         $minute = $request->input('minute');
         $location = $request->input('location');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
 
         $serviceRequest = new ServiceRequest();
 
@@ -31,6 +33,9 @@ class CustomerServiceRequestController extends Controller
         $serviceRequest->set_date = $year . '-' . $month . '-' . $day;;
         $serviceRequest->set_time = $hour . ':' . $minute;
         $serviceRequest->location = $location;
+        $serviceRequest->latitude = $latitude;
+        $serviceRequest->longitude = $longitude;
+        $serviceRequest->status = 'Pending';
         $serviceRequest->is_cancelled = 0;
 
         if ($serviceRequest->save()) {
