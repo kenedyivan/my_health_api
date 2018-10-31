@@ -72,6 +72,7 @@ class CustomerServiceRequestController extends Controller
                 $serviceObject["set_date"] = $service->set_date;
                 $serviceObject["set_time"] = $service->set_time;
                 $serviceObject["location"] = $service->location;
+                $serviceObject["status"] = $service->status;
 
                 array_push($servicesArray, $serviceObject);
             }
