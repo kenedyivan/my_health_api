@@ -71,6 +71,7 @@ class CustomerEventsController extends Controller
         $event->repeat_sequence = $repeat;
         $event->location = $location;
         $event->is_cancelled = 0;
+        $event->status = 'Pending';
 
 
         if ($event->save()) {
