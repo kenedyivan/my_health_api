@@ -262,18 +262,7 @@ class CustomerEventsController extends Controller
 
         if ($event->save()) {
             $resp['msg'] = 'Comment saved';
-            $resp['event'] = [
-                'id' => $event->id,
-                'title' => $event->title,
-                'note' => $event->note,
-                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                'actual_date_time' => $event->actual_date_time,
-                'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                'before_date_time' => $event->before_date_time,
-                'repeat' => $event->repeat_sequence,
-                'location' => $event->location,
-                'event_type' => $event->event_type->event_type
-            ];
+            $resp['event'] = $this->parseEventDetails($event);
             $resp['error'] = 0;
             $resp['success'] = 1;
         } else {
