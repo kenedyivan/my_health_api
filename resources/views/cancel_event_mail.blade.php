@@ -8,7 +8,7 @@
 
 ?> 
 
-<h2>Dear AAR</h2>
+<h2>Dear Liberty Health Insurance</h2>
 <p>This is a request from {{$customer_name}} who would like to schedule <?php echo $article;?> {{$event_type}} for <?php $date = new DateTime($actual_date_time);
 echo $date->format('Y-m-d \a\t H:i a');?>.</p>
 <p>Subject: {{$title}}</p>
@@ -20,4 +20,4 @@ echo $date->format('Y-m-d \a\t H:i a');?>.</p>
 
 <br/>
 <br/>
-<p>Sent from <strong>My Health App at</strong> <?php echo date("Y/m/d h:i:s a");?></p>
+<p>Sent from <strong>Liberty Health App at</strong> <?php echo date("Y/m/d h:i:s a");?></p>
