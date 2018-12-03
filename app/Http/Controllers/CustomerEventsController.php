@@ -43,7 +43,22 @@ class CustomerEventsController extends Controller
         $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        $event->actual_date_time = $actual_date_time;
+        
+        $format = 'Y-m-d H:i';
+        $date = DateTime::createFromFormat($format, $actual_date_time);
+        $formattedActualDate = '';
+        if($date->format('m') == 0 || $date->format('m') == 12){
+            $month = 12;
+            $formattedActualDate = $date->format('Y-')
+                                    .$month
+                                    .$date->format('-d ')
+                                    .$date->format('H:i');
+        }else{
+            $formattedActualDate = $actual_date_time;
+        }
+
+        $event->actual_date_time = $formattedActualDate;
+
         $event->unique_actual_alarm_id = $unique_alarm_id;
         $event->before_ten_mins_id = $unique_alarm_id + 1;
         $event->before_thirty_mins_id = $unique_alarm_id + 2;

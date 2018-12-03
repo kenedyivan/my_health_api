@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use DateTime;
 
 /*
 |--------------------------------------------------------------------------
@@ -175,3 +176,15 @@ Route::post('/users/{userId}/customer-illnesses/{illnessId}/medications/{medicat
 //Delete customer illness medication
 Route::get('/users/{userId}/customer-illnesses/{illnessId}/medications/{medicationId}/delete',
     'CustomerIllnessMedicationsController@deleteIllnessMedication');
+
+/*Route::get('test-date',function(){
+    $format = 'Y-m-d H:i';
+    $date = DateTime::createFromFormat($format, '2009-12-15 15:16');
+    $month = 12;
+    $formattedActualDate = $date->format('Y-')
+    .$month
+    .$date->format('-d ')
+    .$date->format('H:i');
+
+    return $formattedActualDate;
+});*/
