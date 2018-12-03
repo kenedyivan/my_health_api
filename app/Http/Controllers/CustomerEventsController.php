@@ -45,6 +45,8 @@ class CustomerEventsController extends Controller
         $event->title = $title;
         
         $format = 'Y-m-d H:i';
+
+        
         $date = DateTime::createFromFormat($format, $actual_date_time);
         $formattedActualDate = '';
         if($date->format('m') == 0 || $date->format('m') == 12){
@@ -57,6 +59,7 @@ class CustomerEventsController extends Controller
             $formattedActualDate = $actual_date_time;
         }
 
+
         $event->actual_date_time = $formattedActualDate;
 
         $event->unique_actual_alarm_id = $unique_alarm_id;
@@ -66,20 +69,67 @@ class CustomerEventsController extends Controller
         $event->before_one_day_id = $unique_alarm_id + 4;
 
         if ($before_ten_mins != "") {
-            $event->before_ten_mins = $before_ten_mins;
+            $date = DateTime::createFromFormat($format, $before_ten_mins);
+            $formattedBeforeTenMins = '';
+            if($date->format('m') == 0 || $date->format('m') == 12){
+                $month = 12;
+                $formattedBeforeTenMins = $date->format('Y-')
+                                        .$month
+                                        .$date->format('-d ')
+                                        .$date->format('H:i');
+            }else{
+                $formattedBeforeTenMins = $before_ten_mins;
+            }
+
+            $event->before_ten_mins = $formattedBeforeTenMins;
 
         }
 
         if ($before_thirty_mins != "") {
-            $event->before_thirty_mins = $before_thirty_mins;
+            $date = DateTime::createFromFormat($format, $before_thirty_mins);
+            $formattedBeforeThirtyMins = '';
+            if($date->format('m') == 0 || $date->format('m') == 12){
+                $month = 12;
+                $formattedBeforeThirtyMins = $date->format('Y-')
+                                        .$month
+                                        .$date->format('-d ')
+                                        .$date->format('H:i');
+            }else{
+                $formattedBeforeThirtyMins = $before_thirty_mins;
+            }
+            $event->before_thirty_mins = $formattedBeforeThirtyMins;
         }
 
         if ($before_one_hour != "") {
-            $event->before_one_hour = $before_one_hour;
+            $date = DateTime::createFromFormat($format, $before_one_hour);
+            $formattedBeforeOnHour = '';
+            if($date->format('m') == 0 || $date->format('m') == 12){
+                $month = 12;
+                $formattedBeforeOneHour = $date->format('Y-')
+                                        .$month
+                                        .$date->format('-d ')
+                                        .$date->format('H:i');
+            }else{
+                $formattedBeforeOneHour = $before_one_hour;
+            }
+
+            $event->before_one_hour = $formattedBeforeOneHour;
         }
 
         if ($before_one_day != "") {
-            $event->before_one_day = $before_one_day;
+            $date = DateTime::createFromFormat($format, $before_one_day);
+            $formattedBeforeOneDay = '';
+            if($date->format('m') == 0 || $date->format('m') == 12){
+                $month = 12;
+                $formattedBeforeOneDay = $date->format('Y-')
+                                        .$month
+                                        .$date->format('-d ')
+                                        .$date->format('H:i');
+            }else{
+                $formattedBeforeOneDay = $before_one_day;
+            }
+
+            $event->before_one_day = $formattedBeforeOneDay;
         }
 
 
