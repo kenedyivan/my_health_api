@@ -30,7 +30,12 @@ class CustomerServiceRequestController extends Controller
 
         $serviceRequest->customer_id = $customer_id;
         $serviceRequest->service_type = $service_type;
-        $serviceRequest->set_date = $year . '-' . $month . '-' . $day;;
+        if($month == 0 || $month == 12){
+            $formattedMonth = 12;
+        }else{
+            $formattedMonth = $month;
+        }
+        $serviceRequest->set_date = $year . '-' . $formattedMonth . '-' . $day;
         $serviceRequest->set_time = $hour . ':' . $minute;
         $serviceRequest->location = $location;
         $serviceRequest->latitude = $latitude;
