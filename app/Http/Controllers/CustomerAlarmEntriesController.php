@@ -37,9 +37,9 @@ class CustomerAlarmEntriesController extends Controller
         $alarm->set_time = $set_time;
         $alarm->days_frequency = $days_frequency;
 
+        //Updates days frequency and set time in medications table
         $medication->days_frequency = $days_frequency;
         $medication->set_time = $set_time;
-
         $medication->save();
 
         if ($alarm->save()) {

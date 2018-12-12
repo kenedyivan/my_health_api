@@ -23,15 +23,9 @@ class CustomerAllergiesController extends Controller
                     $allergiesList = array();
 
                     foreach ($user->allergies as $allergy) {
-                        $al = array();
-                        $al["id"] = $allergy->customer_allergy_id;
-                        $al["disease"] = $allergy->allergy_type->al_name;
-                        $al["diagnosis"] = $allergy->diagnosis;
-                        $al["t_date"] = $allergy->t_date;
-                        $al["notes"] = $allergy->notes;
-                        $al["created_at"] = $allergy->created_at;
+                        $allergyObject = $allergy->getAllergyDetails();
 
-                        array_push($allergiesList, $al);
+                        array_push($allergiesList, $allergyObject);
                     }
                     $resp['allergies'] = $allergiesList;
 

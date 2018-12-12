@@ -23,14 +23,8 @@ class CustomerAllergyMedicationsController extends Controller
                 if ($allergy->medications->count() > 0) {
                     $medications = array();
                     foreach ($allergy->medications as $medication) {
-                        $med_array = array();
-                        $med_array['medication_id'] = $medication->allergy_medication_id;
-                        $med_array['drug_name'] = $medication->drug_name;
-                        $med_array['frequency'] = $medication->frequency;
-                        $med_array['notes'] = $medication->notes;
-                        $med_array['set_time'] = $medication->set_time;
-                        $med_array['days'] = $medication->days_frequency;
-                        array_push($medications, $med_array);
+                        $medicationDataArray = $medication->getMedicationDetails();
+                        array_push($medications, $medicationDataArray);
                     }
 
                     $resp['msg'] = 'Allergy medications';
@@ -72,15 +66,7 @@ class CustomerAllergyMedicationsController extends Controller
 
                 $resp['msg'] = 'Allergy medication data';
 
-                $resp['data'] = [
-                    'medication_id' => $medication->allergy_medication_id,
-                    'allergy_id' => $medication->customer_allergy_id,
-                    'drug_name' => $medication->drug_name,
-                    'frequency' => $medication->frequency,
-                    'notes' => $medication->notes,
-                    'set_time' => $medication->set_time,
-                    'days' => $medication->days_frequency
-                ];
+                $resp['data'] = $medication->getMedicationDetails();
 
                 $resp['error'] = 0;
                 $resp['success'] = 1;
@@ -170,15 +156,7 @@ class CustomerAllergyMedicationsController extends Controller
 
                     $resp['msg'] = 'Medication added successfully';
 
-                    $resp['data'] = [
-                        'medication_id' => $medication->allergy_medication_id,
-                        'allergy_id' => $medication->customer_allergy_id,
-                        'drug_name' => $medication->drug_name,
-                        'frequency' => $medication->frequency,
-                        'notes' => $medication->notes,
-                        'set_time' => $medication->set_time,
-                        'days' => $medication->days_frequency
-                    ];
+                    $resp['data'] = $medication->getMedicationDetails();
 
                     $resp['error'] = 0;
                     $resp['success'] = 1;

@@ -43,19 +43,19 @@ class CustomerEventsController extends Controller
         $event->event_type_id = $ev;
         $event->customer_id = $customer_id;
         $event->title = $title;
-        
+
         $format = 'Y-m-d H:i';
 
-        
+
         $date = DateTime::createFromFormat($format, $actual_date_time);
         $formattedActualDate = '';
-        if($date->format('m') == 0 || $date->format('m') == 12){
+        if ($date->format('m') == 0 || $date->format('m') == 12) {
             $month = 12;
             $formattedActualDate = $date->format('Y-')
-                                    .$month
-                                    .$date->format('-d ')
-                                    .$date->format('H:i');
-        }else{
+                . $month
+                . $date->format('-d ')
+                . $date->format('H:i');
+        } else {
             $formattedActualDate = $actual_date_time;
         }
 
@@ -71,13 +71,13 @@ class CustomerEventsController extends Controller
         if ($before_ten_mins != "") {
             $date = DateTime::createFromFormat($format, $before_ten_mins);
             $formattedBeforeTenMins = '';
-            if($date->format('m') == 0 || $date->format('m') == 12){
+            if ($date->format('m') == 0 || $date->format('m') == 12) {
                 $month = 12;
                 $formattedBeforeTenMins = $date->format('Y-')
-                                        .$month
-                                        .$date->format('-d ')
-                                        .$date->format('H:i');
-            }else{
+                    . $month
+                    . $date->format('-d ')
+                    . $date->format('H:i');
+            } else {
                 $formattedBeforeTenMins = $before_ten_mins;
             }
 
@@ -88,13 +88,13 @@ class CustomerEventsController extends Controller
         if ($before_thirty_mins != "") {
             $date = DateTime::createFromFormat($format, $before_thirty_mins);
             $formattedBeforeThirtyMins = '';
-            if($date->format('m') == 0 || $date->format('m') == 12){
+            if ($date->format('m') == 0 || $date->format('m') == 12) {
                 $month = 12;
                 $formattedBeforeThirtyMins = $date->format('Y-')
-                                        .$month
-                                        .$date->format('-d ')
-                                        .$date->format('H:i');
-            }else{
+                    . $month
+                    . $date->format('-d ')
+                    . $date->format('H:i');
+            } else {
                 $formattedBeforeThirtyMins = $before_thirty_mins;
             }
             $event->before_thirty_mins = $formattedBeforeThirtyMins;
@@ -103,13 +103,13 @@ class CustomerEventsController extends Controller
         if ($before_one_hour != "") {
             $date = DateTime::createFromFormat($format, $before_one_hour);
             $formattedBeforeOnHour = '';
-            if($date->format('m') == 0 || $date->format('m') == 12){
+            if ($date->format('m') == 0 || $date->format('m') == 12) {
                 $month = 12;
                 $formattedBeforeOneHour = $date->format('Y-')
-                                        .$month
-                                        .$date->format('-d ')
-                                        .$date->format('H:i');
-            }else{
+                    . $month
+                    . $date->format('-d ')
+                    . $date->format('H:i');
+            } else {
                 $formattedBeforeOneHour = $before_one_hour;
             }
 
@@ -119,13 +119,13 @@ class CustomerEventsController extends Controller
         if ($before_one_day != "") {
             $date = DateTime::createFromFormat($format, $before_one_day);
             $formattedBeforeOneDay = '';
-            if($date->format('m') == 0 || $date->format('m') == 12){
+            if ($date->format('m') == 0 || $date->format('m') == 12) {
                 $month = 12;
                 $formattedBeforeOneDay = $date->format('Y-')
-                                        .$month
-                                        .$date->format('-d ')
-                                        .$date->format('H:i');
-            }else{
+                    . $month
+                    . $date->format('-d ')
+                    . $date->format('H:i');
+            } else {
                 $formattedBeforeOneDay = $before_one_day;
             }
 
@@ -339,7 +339,7 @@ class CustomerEventsController extends Controller
         return $resp;
     }
 
-    //Gest events for customer with 
+    //Gets events for customer with
     function getEventsList(Request $request)
     {
         //Get the customer id
@@ -360,20 +360,10 @@ class CustomerEventsController extends Controller
         } else {
             //Events are available
             foreach ($events as $event) {
-                $ev = [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'note' => $event->note,
-                    'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                    'actual_date_time' => $event->actual_date_time,
-                    'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                    'before_date_time' => $event->before_date_time,
-                    'repeat' => $event->repeat_sequence,
-                    'location' => $event->location,
-                    'event_type' => $event->event_type->event_type
-                ];
 
-                array_push($eventList, $ev);
+                $eventObject = $event->getEventDetails();
+
+                array_push($eventList, $eventObject);
             }
 
             $resp['msg'] = 'Events list';
@@ -392,7 +382,7 @@ class CustomerEventsController extends Controller
         $eventList = array();
 
         //Query the database given the customer id
-        $events = Event::where('customer_id','<>',0)->get();
+        $events = Event::where('customer_id', '<>', 0)->get();
 
         //check if the events are available
         if ($events->count() < 1) {
@@ -402,21 +392,9 @@ class CustomerEventsController extends Controller
         } else {
             //Events are available
             foreach ($events as $event) {
-                $ev = [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'note' => $event->note,
-                    'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                    'actual_date_time' => $event->actual_date_time,
-                    'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                    'before_date_time' => $event->before_date_time,
-                    'repeat' => $event->repeat_sequence,
-                    'location' => $event->location,
-                    'event_type' => $event->event_type->event_type,
-                    'customer' => $event->customer->username,
-                ];
+                $eventObject = $event->getEventDetails();
 
-                array_push($eventList, $ev);
+                array_push($eventList, $eventObject);
             }
 
             $resp['msg'] = 'Events list';
@@ -437,18 +415,7 @@ class CustomerEventsController extends Controller
 
         if ($event->save()) {
             $resp['msg'] = 'Event date';
-            $resp['event'] = [
-                'id' => $event->id,
-                'title' => $event->title,
-                'note' => $event->note,
-                'unique_actual_alarm_id' => $event->unique_actual_alarm_id,
-                'actual_date_time' => $event->actual_date_time,
-                'unique_before_alarm_id' => $event->unique_before_alarm_id,
-                'before_date_time' => $event->before_date_time,
-                'repeat' => $event->repeat_sequence,
-                'location' => $event->location,
-                'event_type' => $event->event_type->event_type
-            ];
+            $resp['event'] = $event->getEventDetails();
             $resp['error'] = 0;
             $resp['success'] = 1;
         } else {

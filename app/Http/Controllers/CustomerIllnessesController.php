@@ -25,15 +25,9 @@ class CustomerIllnessesController extends Controller
                     $illnessList = array();
 
                     foreach ($user->illnesses as $illness) {
-                        $ill = array();
-                        $ill["id"] = $illness->customer_illness_id;
-                        $ill["disease"] = $illness->disease_type->d_name;
-                        $ill["diagnosis"] = $illness->diagnosis;
-                        $ill["t_date"] = $illness->t_date;
-                        $ill["notes"] = $illness->notes;
-                        $ill["created_at"] = $illness->created_at;
+                        $illnessObject = $illness->getIllnessDetails();
 
-                        array_push($illnessList, $ill);
+                        array_push($illnessList, $illnessObject);
                     }
 
                     $resp['illnesses'] = $illnessList;
@@ -78,14 +72,7 @@ class CustomerIllnessesController extends Controller
                 $item_array['created_at'] = $illness->created_at;
 
                 $resp['msg'] = 'Illness data';
-                $resp['illness'] = [
-                    'id' => $illness->customer_illness_id,
-                    'disease' => $illness->disease_type->d_name,
-                    'diagnosis' => $illness->diagnosis,
-                    't_date' => $illness->t_date,
-                    'notes' => $illness->notes,
-                    'created_at' => $illness->created_at
-                ];
+                $resp['illness'] = $illness->getIllnessDetails();
                 $resp['error'] = 0;
                 $resp['success'] = 1;
             } else {
@@ -160,13 +147,7 @@ class CustomerIllnessesController extends Controller
                 $illness->notes = $notes;
 
                 if ($illness->save()) {
-                    $resp['data'] = [
-                        'id' => $illness->customer_illness_id,
-                        'disease_type' => $illness->disease_type->d_name,
-                        'diagnosis' => $illness->diagnosis,
-                        't_date' => $illness->t_date,
-                        'notes' => $illness->notes,
-                    ];
+                    $resp['data'] = $illness->getIllnessDetails();
                     $resp['type'] = 'illness';
                     $resp['msg'] = 'Customer illness created successful';
                     $resp['error'] = 0;
@@ -219,14 +200,7 @@ class CustomerIllnessesController extends Controller
                 if ($illness->save()) {
 
                     $resp['msg'] = 'Customer illness changes saved successful';
-                    $resp['data'] = [
-                        'id' => $illness->customer_illness_id,
-                        'illness_type_id' => $illness->disease_type_id,
-                        'illness' => $illness->disease_type->d_name,
-                        'diagnosis' => $illness->diagnosis,
-                        't_date' => $illness->t_date,
-                        'notes' => $illness->notes,
-                    ];
+                    $resp['data'] = $illness->getIllnessDetails();
                     $resp['error'] = 0;
                     $resp['success'] = 1;
                 } else {
