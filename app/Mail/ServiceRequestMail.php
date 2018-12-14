@@ -32,7 +32,7 @@ class ServiceRequestMail extends Mailable
     public function build()
     {
         return $this->subject('Service request ' . '#' . $this->service->service_request_id)
-            ->view('mail')->with([
+            ->view('service_request_email')->with([
                 'customer_name' => $this->service->customer->first_name . ' ' . $this->service->customer->last_name,
                 'phone_number' => $this->service->customer->phone_number,
                 'service_type' => $this->service->service_type,

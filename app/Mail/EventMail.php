@@ -38,7 +38,7 @@ class EventMail extends Mailable
             $event_title = 'Clinic visit ' . '#' . $this->event->id;
         }
         return $this->subject($event_title)
-            ->view('event_mail')->with([
+            ->view('reminder_email')->with([
                 'title' => $this->event->title,
                 'actual_date_time' => $this->event->actual_date_time,
                 'location' => $this->event->location,

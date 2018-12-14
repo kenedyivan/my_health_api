@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EmailHandler\EmailHandlerFactory;
 use Illuminate\Http\Request;
 use App\AppUser;
 
@@ -35,6 +36,7 @@ class UserRegistrationController extends Controller
             $user->last_name = $lastName;
             $user->email_address = $emailAddress;
             $user->phone_number = $phoneNumber;
+            $user->login_state = 0;
             $user->password = md5($password);
 
             if ($user->save()) {
@@ -57,7 +59,7 @@ class UserRegistrationController extends Controller
         return json_encode($resp);
     }
 
-    function unique_aar_id()
+    private function unique_aar_id()
     {
         # prevent the first number from being 0
         $output = rand(1, 9);
@@ -68,6 +70,19 @@ class UserRegistrationController extends Controller
 
         return $output;
     }
+
+
+    private function generateTemporaryPassword($length = 6)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
 
     function update(Request $request)
     {
@@ -117,6 +132,52 @@ class UserRegistrationController extends Controller
             $resp['success'] = 0;
         }
 
+        return $resp;
+
+    }
+
+    function forgotPassword(Request $request)
+    {
+        $emailAddress = $request->input('email_address');
+
+        $user = AppUser::where('email_address', $emailAddress)->get();
+
+        if ($user->count() > 0) {
+            $user = $user[0];
+            //Generate temporary password
+            $temporaryPassword = $this->generateTemporaryPassword();
+            parent::logger("Generated temporary password, Email id = $emailAddress");
+            $temporaryPasswordHash = md5($temporaryPassword);
+
+            $user->temporary_password = $temporaryPasswordHash;
+            $user->login_state = 1; //Recovery mode
+
+            if ($user->save()) {
+                parent::logger("Saved temporary password to database, Email id = $emailAddress");
+                $emailHandler = EmailHandlerFactory::createEmailHandler();
+                $emailHandler->sendForgotPasswordEmail($emailAddress, $temporaryPassword);
+
+                $resp['msg'] = 'Temporary password generated';
+                $resp['id'] = 0;
+                $resp['error'] = 0;
+                $resp['success'] = 1;
+
+            } else {
+                parent::logger("Failed to save temporary password to database, Email id = $emailAddress");
+                $resp['msg'] = 'Failed to save temporary password';
+                $resp['error'] = 1;
+                $resp['success'] = 0;
+            }
+
+        } else {
+            parent::logger("Could not find email address in the database, Email id = $emailAddress");
+            $resp['msg'] = 'Email not found';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        $responseString = json_encode($resp);
+        parent::logger("Forgot password process response, response = $responseString");
         return $resp;
 
     }

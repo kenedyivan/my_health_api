@@ -23,6 +23,10 @@ Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/update', 'UserRegistrationController@update');
 Route::get('/users/admin', 'UserRegistrationController@getAllUsers');
 
+//Forgot password
+Route::post('/users/forgot-password', 'UserRegistrationController@forgotPassword');
+
+
 //Events
 Route::post('/users/events', 'CustomerEventsController@createEvent');
 Route::get('/users/events/admin', 'CustomerEventsController@getAllEventsList');

@@ -15,4 +15,5 @@ interface iEmailHandler
     public function sendServiceRequestCancelEmail($service);
     public function sendAppointmentEmail($event);
     public function sendCancelAppointmentEmail($event);
+    public function sendForgotPasswordEmail($userEmail, $temporaryPassword);
 }
