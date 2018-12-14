@@ -15,40 +15,26 @@ class UserRegistrationController extends Controller
 
         $firstName = $request->input('first_name');
         $lastName = $request->input('last_name');
-        $username = $request->input('username');
-        $email_address = $request->input('email_address');
-        $phone_number = $request->input('phone_number');
+        $emailAddress = $request->input('email_address');
+        $phoneNumber = $request->input('phone_number');
         $password = $request->input('password');
 
 
-        //Checks if username is already used
-        $username_check = AppUser::where('username', $username)->take(1)->get();
+        //Checks if email address is already used
+        $username_check = AppUser::where('email_address', $emailAddress)->take(1)->get();
 
         if ($username_check->count() > 0) {
-            $resp['msg'] = 'Username already taken';
+            $resp['msg'] = 'Email address already taken';
             $resp['id'] = 0;
             $resp['error'] = 2;
             $resp['success'] = 0;
         } else {
-            $aar_id = '';
-            while (true) {
-                //Generates new aar_id
-                $aar_id = $this->unique_aar_id();
-
-                //Checks if aar_id already used
-                $aar_id_check = AppUser::where('aar_id', $aar_id)->take(1)->get();
-                if ($aar_id_check->count() != 1) {
-                    break;
-                }
-            }
 
             $user = new AppUser();
             $user->first_name = $firstName;
             $user->last_name = $lastName;
-            $user->username = $username;
-            $user->aar_id = $aar_id;
-            $user->email_address = $email_address;
-            $user->phone_number = $phone_number;
+            $user->email_address = $emailAddress;
+            $user->phone_number = $phoneNumber;
             $user->password = md5($password);
 
             if ($user->save()) {
@@ -56,8 +42,6 @@ class UserRegistrationController extends Controller
                 $resp['id'] = $user->customer_id;
                 $resp['user'] = ['first_name' => $user->first_name,
                     'last_name' => $user->last_name,
-                    'username' => $user->username,
-                    'aar_id' => $user->aar_id,
                     'email_address' => $user->email_address,
                     'phone_number' => $user->phone_number];
                 $resp['error'] = 0;
@@ -92,9 +76,8 @@ class UserRegistrationController extends Controller
         $userId = $request->input('user_id');
         $firstName = $request->input('first_name');
         $lastName = $request->input('last_name');
-        $username = $request->input('username');
-        $email_address = $request->input('email_address');
-        $phone_number = $request->input('phone_number');
+        $emailAddress = $request->input('email_address');
+        $phoneNumber = $request->input('phone_number');
 
         $user = AppUser::find($userId);
 
@@ -106,20 +89,16 @@ class UserRegistrationController extends Controller
             $user->last_name = $lastName;
         }
 
-        if ($username != null && $username != $user->username) {
-            $user->username = $username;
+        if ($emailAddress != null && $emailAddress != $user->email_address) {
+            $user->email_address = $emailAddress;
         }
 
-        if ($email_address != null && $email_address != $user->email_address) {
-            $user->email_address = $email_address;
+        if ($phoneNumber != null && $phoneNumber != $user->phone_number) {
+            $user->phone_number = $phoneNumber;
         }
 
-        if ($phone_number != null && $phone_number != $user->phone_number) {
-            $user->phone_number = $phone_number;
-        }
-
-        if ($email_address != null && $email_address != $user->email_address) {
-            $user->email_address = $email_address;
+        if ($emailAddress != null && $emailAddress != $user->email_address) {
+            $user->email_address = $emailAddress;
         }
 
         if ($user->save()) {
@@ -127,8 +106,6 @@ class UserRegistrationController extends Controller
             $resp['id'] = $user->customer_id;
             $resp['user'] = ['first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'username' => $user->username,
-                'aar_id' => $user->aar_id,
                 'email_address' => $user->email_address,
                 'phone_number' => $user->phone_number];
             $resp['error'] = 0;
@@ -175,18 +152,17 @@ class UserRegistrationController extends Controller
     }
 
     //Gets users for Admin client
-    function getAllUsers(){
+    function getAllUsers()
+    {
         $users = AppUser::all();
         $resp = array();
-        if($users->count() > 0){
+        if ($users->count() > 0) {
             $userArray = array();
             foreach ($users as $user) {
                 $userObject = array();
                 $userObject["id"] = $user->customer_id;
-                $userObject["aar_id"] = $user->aar_id;
                 $userObject["first_name"] = $user->first_name;
                 $userObject["last_name"] = $user->last_name;
-                $userObject["username"] = $user->username;
                 $userObject["email_address"] = $user->email_address;
                 $userObject["phone_number"] = $user->phone_number;
                 $userObject["created_at"] = $user->created_at;
@@ -197,7 +173,7 @@ class UserRegistrationController extends Controller
             $resp['msg'] = 'Found users';
             $resp['error'] = 0;
             $resp['success'] = 1;
-        }else{
+        } else {
             $resp['msg'] = 'Found no users';
             $resp['error'] = 1;
             $resp['success'] = 0;

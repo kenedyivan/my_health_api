@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Allergy;
 use App\Illness;
+use DateTime;
 use Illuminate\Http\Request;
 
 class CustomerIllnessesControllerOrig extends Controller
 {
+
     function show(Request $request)
     {
         $resp = array();
@@ -86,7 +88,7 @@ class CustomerIllnessesControllerOrig extends Controller
                 $resp['success'] = 0;
             }
 
-        } else if($type == "ALLERGY"){
+        } else if ($type == "ALLERGY") {
             $allergy = Allergy::find($my_heal_id);
             if ($allergy->delete()) {
                 $resp['msg'] = 'Deleted';
@@ -136,15 +138,21 @@ class CustomerIllnessesControllerOrig extends Controller
         $day = $request->input('day');
         $notes = $request->input('notes');
 
+        $requestContent = $request->getContent();
+
+        parent::logger("Received health problem data, User ID = { $customer_id }, RequestBody = { $requestContent }");
+
         if ($page == 0) {
             $illness = new Illness();
             $illness->customer_id = $customer_id;
             $illness->disease_type_id = $disease;
             $illness->diagnosis = $diagnosis;
-            $illness->t_date = $year . '-' . $month . '-' . $day;
+            $illness->t_date = $this->cleanDate($year, $month, $day);
             $illness->notes = $notes;
 
             if ($illness->save()) {
+                parent::logger("User illness data saved to database, User ID = { $customer_id }");
+
                 $resp['data'] = [
                     'id' => $illness->customer_illness_id,
                     'disease_type' => $illness->disease_type->d_name,
@@ -157,6 +165,7 @@ class CustomerIllnessesControllerOrig extends Controller
                 $resp['error'] = 0;
                 $resp['success'] = 1;
             } else {
+                parent::logger("User illness data did not save to database, User ID = { $customer_id }");
                 $resp['msg'] = 'Failed creating customer illness';
                 $resp['error'] = 1;
                 $resp['success'] = 0;
@@ -166,10 +175,11 @@ class CustomerIllnessesControllerOrig extends Controller
             $allergy->customer_id = $customer_id;
             $allergy->allergy_type_id = $disease;
             $allergy->diagnosis = $diagnosis;
-            $allergy->t_date = $year . '-' . $month . '-' . $day;
+            $allergy->t_date = $this->cleanDate($year, $month, $day);
             $allergy->notes = $notes;
 
             if ($allergy->save()) {
+                parent::logger("User allergy data saved to database, User ID = { $customer_id }");
                 $resp['data'] = [
                     'id' => $allergy->customer_allergy_id,
                     'disease_type' => $allergy->allergy_type->al_name,
@@ -182,12 +192,15 @@ class CustomerIllnessesControllerOrig extends Controller
                 $resp['error'] = 0;
                 $resp['success'] = 1;
             } else {
+                parent::logger("User allergy data did not save to database, User ID = { $customer_id }");
                 $resp['msg'] = 'Failed creating customer allergy';
                 $resp['error'] = 1;
                 $resp['success'] = 0;
             }
         }
 
+        $responseString = json_encode($resp);
+        parent::logger("Save health problem process response, User ID = { $customer_id }, Response = { $responseString }");
         return $resp;
     }
 
@@ -209,7 +222,7 @@ class CustomerIllnessesControllerOrig extends Controller
             $illness = Illness::find($my_health_id);
             $illness->disease_type_id = $disease;
             $illness->diagnosis = $diagnosis;
-            $illness->t_date = $year . '-' . $month . '-' . $day;
+            $illness->t_date = $this->cleanDate($year, $month, $day);
             $illness->notes = $notes;
 
             if ($illness->save()) {
@@ -233,7 +246,7 @@ class CustomerIllnessesControllerOrig extends Controller
             $allergy = Allergy::find($my_health_id);
             $allergy->allergy_type_id = $disease;
             $allergy->diagnosis = $diagnosis;
-            $allergy->t_date = $year . '-' . $month . '-' . $day;
+            $allergy->t_date = $this->cleanDate($year, $month, $day);
             $allergy->notes = $notes;
 
             if ($allergy->save()) {
@@ -321,5 +334,14 @@ class CustomerIllnessesControllerOrig extends Controller
         }
 
         return $resp;
+    }
+
+    function cleanDate($year, $month, $day)
+    {
+        if ($month == 0 || $month == 12) {
+            return "$year-12-$day";
+        } else {
+            return "$year-$month-$day";
+        }
     }
 }

@@ -14,88 +14,101 @@ class CustomerAlarmEntriesController extends Controller
     {
         $resp = array();
         $type = $request->input('type');
-        $medication_id = $request->input('medication_id');
-        $my_health_id = $request->input('my_health_id');
-        $customer_id = $request->input('customer_id');
-        $days_frequency = $request->input('days_frequency');
-        $unique_alarm_id = $request->input('unique_alarm_id');
-        $set_time = $request->input('set_time');
+        $medicationId = $request->input('medication_id');
+        $myHealthId = $request->input('my_health_id');
+        $customerId = $request->input('customer_id');
+        $daysFrequency = $request->input('days_frequency');
+        $uniqueAlarmId = $request->input('unique_alarm_id');
+        $setTime = $request->input('set_time');
+
+        $requestContent = $request->getContent();
+        parent::logger("User medication alarm request, User id = $customerId, request content = $requestContent");
 
         $alarm = new AlarmEntry();
         if ($type == 0) {
             $alarm->type = "illness";
             $problem_type = "illness";
-            $medication = IllnessMedication::find($medication_id);
+            $medication = IllnessMedication::find($medicationId);
         } else if ($type == 1) {
             $alarm->type = "allergy";
             $problem_type = "allergy";
-            $medication = AllergyMedication::find($medication_id);
+            $medication = AllergyMedication::find($medicationId);
         }
-        $alarm->medication_id = $medication_id;
-        $alarm->my_health_id = $my_health_id;
-        $alarm->customer_id = $customer_id;
-        $alarm->set_time = $set_time;
-        $alarm->days_frequency = $days_frequency;
+        $alarm->medication_id = $medicationId;
+        $alarm->my_health_id = $myHealthId;
+        $alarm->customer_id = $customerId;
+        $alarm->set_time = $setTime;
+        $alarm->days_frequency = $daysFrequency;
 
         //Updates days frequency and set time in medications table
-        $medication->days_frequency = $days_frequency;
-        $medication->set_time = $set_time;
+        $medication->days_frequency = $daysFrequency;
+        $medication->set_time = $setTime;
         $medication->save();
+
+        parent::logger("Updated user health problem medication time = $setTime, days = $daysFrequency");
 
         if ($alarm->save()) {
             $days_arr = array();
-            $days_arr = explode(" ", $days_frequency);
+            $days_arr = explode(" ", $daysFrequency);
             $entry_id = $alarm->alarm_entry_id;
 
             foreach ($days_arr as $day) {
                 if ($day == "Monday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 1;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 1;
                     $frequency->day = "monday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Tuesday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 2;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 2;
                     $frequency->day = "tuesday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Wednesday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 3;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 3;
                     $frequency->day = "wednesday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Thursday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 4;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 4;
                     $frequency->day = "thursday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Friday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 5;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 5;
                     $frequency->day = "friday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Saturday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 6;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 6;
                     $frequency->day = "saturday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Sunday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 7;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 7;
                     $frequency->day = "sunday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 } else if ($day == "Everyday") {
                     $frequency = new AlarmFrequency();
                     $frequency->alarm_entry_id = $entry_id;
-                    $frequency->unique_alarm_id = $unique_alarm_id + 8;
+                    $frequency->unique_alarm_id = $uniqueAlarmId + 8;
                     $frequency->day = "everyday";
                     $frequency->save();
+                    parent::logger("Saved user medication alarm day = $day");
                 }
             }
 
@@ -106,7 +119,7 @@ class CustomerAlarmEntriesController extends Controller
                     $freq_arr = array();
                     $freq_arr['id'] = $freqs->alarm_frequency_id;
                     $freq_arr['type'] = $problem_type;
-                    $freq_arr['medication_id'] = $medication_id;
+                    $freq_arr['medication_id'] = $medicationId;
                     $freq_arr['unique_alarm_id'] = $freqs->unique_alarm_id;
                     $freq_arr['day'] = $freqs->day;
                     array_push($frequency_array, $freq_arr);
@@ -116,17 +129,21 @@ class CustomerAlarmEntriesController extends Controller
 
             $resp['msg'] = 'Reminder saved successfully';
             $resp['id'] = $entry_id;
-            $resp['medication_id'] = $medication_id;
+            $resp['medication_id'] = $medicationId;
             $resp['type'] = $problem_type;
-            $resp['set_time'] = $set_time;
+            $resp['set_time'] = $setTime;
             $resp['error'] = 0;
             $resp['success'] = 1;
+            parent::logger("Saved user medication alarm, User id = $customerId");
         } else {
             $resp['msg'] = 'Saving failed';
             $resp['error'] = 1;
             $resp['success'] = 0;
+            parent::logger("Failed to save medication alarm, User id = $customerId");
         }
 
+        $responseString = json_encode($resp);
+        parent::logger("User medication alarm added response, User id = $customerId, response = $responseString");
         return $resp;
 
     }

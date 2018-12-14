@@ -20,7 +20,7 @@ class CustomerEventsController extends Controller
         $eventType = $request->input('event_type');
         $title = $request->input('title');
         $customer_id = $request->input('customer_id');
-        $actual_date_time = $request->input('actual_date_time');
+        $actualDateTime = $request->input('actual_date_time');
         $before_ten_mins = $request->input('before_ten_mins');
         $before_thirty_mins = $request->input('before_thirty_mins');
         $before_one_hour = $request->input('before_one_hour');
@@ -28,6 +28,11 @@ class CustomerEventsController extends Controller
         $repeat = $request->input('repeat');
         $location = $request->input('location');
         $unique_alarm_id = $request->input('unique_alarm_id');
+
+        $requestBody = $request->getContent();
+
+        parent::logger("User reminder data received, User ID = { $customer_id }, Request body = { $requestBody } ");
+        parent::logger("User reminder actual date, User ID = { $customer_id }, Actual date = { $actualDateTime } ");
 
         $event = new Event();
 
@@ -44,21 +49,9 @@ class CustomerEventsController extends Controller
         $event->customer_id = $customer_id;
         $event->title = $title;
 
-        $format = 'Y-m-d H:i';
+        $formattedActualDate = $this->getProperDateFromRange($actualDateTime);
 
-
-        $date = DateTime::createFromFormat($format, $actual_date_time);
-        $formattedActualDate = '';
-        if ($date->format('m') == 0 || $date->format('m') == 12) {
-            $month = 12;
-            $formattedActualDate = $date->format('Y-')
-                . $month
-                . $date->format('-d ')
-                . $date->format('H:i');
-        } else {
-            $formattedActualDate = $actual_date_time;
-        }
-
+        parent::logger("Formatted date = { $customer_id }, Actual date time = { $formattedActualDate } ");
 
         $event->actual_date_time = $formattedActualDate;
 
@@ -69,67 +62,27 @@ class CustomerEventsController extends Controller
         $event->before_one_day_id = $unique_alarm_id + 4;
 
         if ($before_ten_mins != "") {
-            $date = DateTime::createFromFormat($format, $before_ten_mins);
-            $formattedBeforeTenMins = '';
-            if ($date->format('m') == 0 || $date->format('m') == 12) {
-                $month = 12;
-                $formattedBeforeTenMins = $date->format('Y-')
-                    . $month
-                    . $date->format('-d ')
-                    . $date->format('H:i');
-            } else {
-                $formattedBeforeTenMins = $before_ten_mins;
-            }
-
+            $formattedBeforeTenMins = $this->getProperDateFromRange($before_ten_mins);
             $event->before_ten_mins = $formattedBeforeTenMins;
-
+            parent::logger("Formatted date = { $customer_id }, Before ten mins date time = { $formattedBeforeTenMins } ");
         }
 
         if ($before_thirty_mins != "") {
-            $date = DateTime::createFromFormat($format, $before_thirty_mins);
-            $formattedBeforeThirtyMins = '';
-            if ($date->format('m') == 0 || $date->format('m') == 12) {
-                $month = 12;
-                $formattedBeforeThirtyMins = $date->format('Y-')
-                    . $month
-                    . $date->format('-d ')
-                    . $date->format('H:i');
-            } else {
-                $formattedBeforeThirtyMins = $before_thirty_mins;
-            }
+            $formattedBeforeThirtyMins = $this->getProperDateFromRange($before_thirty_mins);
             $event->before_thirty_mins = $formattedBeforeThirtyMins;
+            parent::logger("Formatted date = { $customer_id }, Before thirty mins date time = { $formattedBeforeThirtyMins } ");
         }
 
         if ($before_one_hour != "") {
-            $date = DateTime::createFromFormat($format, $before_one_hour);
-            $formattedBeforeOnHour = '';
-            if ($date->format('m') == 0 || $date->format('m') == 12) {
-                $month = 12;
-                $formattedBeforeOneHour = $date->format('Y-')
-                    . $month
-                    . $date->format('-d ')
-                    . $date->format('H:i');
-            } else {
-                $formattedBeforeOneHour = $before_one_hour;
-            }
-
+            $formattedBeforeOneHour = $this->getProperDateFromRange($before_one_hour);
             $event->before_one_hour = $formattedBeforeOneHour;
+            parent::logger("Formatted date = { $customer_id }, Before one hour date time = { $formattedBeforeOneHour } ");
         }
 
         if ($before_one_day != "") {
-            $date = DateTime::createFromFormat($format, $before_one_day);
-            $formattedBeforeOneDay = '';
-            if ($date->format('m') == 0 || $date->format('m') == 12) {
-                $month = 12;
-                $formattedBeforeOneDay = $date->format('Y-')
-                    . $month
-                    . $date->format('-d ')
-                    . $date->format('H:i');
-            } else {
-                $formattedBeforeOneDay = $before_one_day;
-            }
-
+            $formattedBeforeOneDay = $this->getProperDateFromRange($before_one_day);
             $event->before_one_day = $formattedBeforeOneDay;
+            parent::logger("Formatted date = { $customer_id }, Before one day date time = { $formattedBeforeOneDay } ");
         }
 
 
@@ -140,7 +93,7 @@ class CustomerEventsController extends Controller
 
 
         if ($event->save()) {
-            Log::info($event->customer->username . " created " . $event->event_type->event_type);
+            parent::logger("User Reminder saved to database, User ID = { $customer_id }");
             $resp['msg'] = 'Event created successful';
             $resp['error'] = 0;
             $resp['success'] = 1;
@@ -148,14 +101,18 @@ class CustomerEventsController extends Controller
 
             if ($ev == 1 || $ev == 2) {
                 $this->sendEventEmail($event);
+                parent::logger("Administrator email for reminder created sent, Reminder ID = { $event->id }");
             }
 
         } else {
-            Log::debug("Failed creating event");
+            parent::logger("Failed sending Administrator reminder created email, Reminder ID = { $event->id }");
             $resp['msg'] = 'Failed creating event';
             $resp['error'] = 1;
             $resp['success'] = 0;
         }
+
+        $responseString = json_encode($resp);
+        parent::logger("Reminder created response, User ID = { $customer_id }, Response = { $responseString }");
 
         return $resp;
     }
@@ -503,5 +460,23 @@ class CustomerEventsController extends Controller
     {
         $emailHandler = EmailHandlerFactory::createEmailHandler();
         $emailHandler->sendCancelAppointmentEmail($event);
+    }
+
+    private function getProperDateFromRange($myDate)
+    {
+        $date = date_create($myDate);
+        $month = date_format($date, "m");
+
+        if ($month == 0 || $month == 12) {
+            $month = 12;
+            $formattedActualDate = $date->format('Y-')
+                . $month
+                . $date->format('-d ')
+                . $date->format('H:i');
+        } else {
+            $formattedActualDate = $myDate;
+        }
+
+        return $formattedActualDate;
     }
 }

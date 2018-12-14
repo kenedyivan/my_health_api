@@ -10,10 +10,10 @@ class UserLoginController extends Controller
     function login(Request $request){
         $resp = array();
 
-        $username = $request->input('username');
+        $emailAddress = $request->input('email_address');
         $password = $request->input('password');
 
-        $user = AppUser::where('username',$username)->take(1)
+        $user = AppUser::where('email_address',$emailAddress)->take(1)
             ->get();
 
         if($user->count() > 0){
@@ -23,9 +23,6 @@ class UserLoginController extends Controller
                 $resp['id'] = $user[0]->customer_id;
                 $resp['user'] = ['first_name'=>$user[0]->first_name,
                     'last_name'=>$user[0]->last_name,
-                    'username'=>$user[0]->username,
-                    'aar_id'=>$user[0]->aar_id,
-                    'staff_id'=>$user[0]->staff_id,
                     'email_address'=>$user[0]->email_address,
                     'phone_number'=>$user[0]->phone_number];
                 $resp['error'] = 0;
