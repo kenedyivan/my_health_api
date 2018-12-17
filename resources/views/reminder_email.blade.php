@@ -1,6 +1,6 @@
 @extends('layouts.email')
-@include('includes.header')
 @section('content')
+    @include('includes.header')
     <?php
     $article = '';
     if ($event_type == 'Appointment') {
@@ -33,8 +33,8 @@
                     <td class="ser_text" align="center"
                         style="color:#464646; font-size: 1.2em; font-family: Candara; line-height:1.8em;">
                         <p>This is a request from <strong>{{$customer_name}}</strong> who would like to
-                            schedule <?php echo $article;?> {{$event_type}}
-                            for <?php $date = new DateTime($actual_date_time);
+                            schedule <?php echo $article;?> {{$event_type}}.</p>
+                        <p>For <?php $date = new DateTime($actual_date_time);
                             echo $date->format('Y-m-d \a\t H:i a');?>.</p>
                         <p>Subject: {{$title}}</p>
                         <p>Location: {{$location}}</p>
@@ -49,5 +49,6 @@
             </table>
         </td>
     </tr>
+    @include('includes.footer')
 @endsection
-@include('includes.footer')
+

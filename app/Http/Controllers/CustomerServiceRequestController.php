@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\EmailHandler\EmailHandlerFactory;
+use App\Jobs\ServiceRequestEmailJob;
+use App\Jobs\ServiceRequestReceivedConfirmationJob;
 use App\Mail\ServiceRequestMail;
 use App\ServiceRequest;
 use Illuminate\Http\Request;
@@ -30,9 +32,9 @@ class CustomerServiceRequestController extends Controller
 
         $serviceRequest->customer_id = $customer_id;
         $serviceRequest->service_type = $service_type;
-        if($month == 0 || $month == 12){
+        if ($month == 0 || $month == 12) {
             $formattedMonth = 12;
-        }else{
+        } else {
             $formattedMonth = $month;
         }
         $serviceRequest->set_date = $year . '-' . $formattedMonth . '-' . $day;
@@ -100,7 +102,7 @@ class CustomerServiceRequestController extends Controller
     {
         $resp = array();
 
-        $services = ServiceRequest::where('customer_id','<>',0)->get();
+        $services = ServiceRequest::where('customer_id', '<>', 0)->get();
 
         if ($services->count() > 0) {
             $servicesArray = array();
@@ -182,8 +184,14 @@ class CustomerServiceRequestController extends Controller
 
     private function sendServiceRequestEmail($service)
     {
-        $emailHandler = EmailHandlerFactory::createEmailHandler();
-        $emailHandler->sendServiceRequestEmail($service);
+
+        ServiceRequestEmailJob::dispatch($service)
+            ->delay(now()
+                ->addSeconds(5));
+
+        ServiceRequestReceivedConfirmationJob::dispatch($service)
+            ->delay(now()
+                ->addSeconds(5));
     }
 
 

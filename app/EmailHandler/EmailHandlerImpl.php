@@ -11,9 +11,11 @@ namespace App\EmailHandler;
 
 use App\EmailRespondent;
 use App\Mail\EventCancelMail;
-use App\Mail\EventMail;
+use App\Mail\ReminderMail;
 use App\Mail\ForgotPasswordMail;
+use App\Mail\ReminderConfirmationMail;
 use App\Mail\ServiceRequestCancelMail;
+use App\Mail\ServiceRequestConfirmationMail;
 use App\Mail\ServiceRequestMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -28,7 +30,6 @@ class EmailHandlerImpl implements iEmailHandler
      */
     public function __construct()
     {
-        //$this->receipient = config('emailrecipient.email');
         $this->respondents = EmailRespondent::all();
     }
 
@@ -39,6 +40,20 @@ class EmailHandlerImpl implements iEmailHandler
                 Log::info("Sent service email to recipient handler address " . $this->respondents);
                 Mail::to($respondent->email_address)->send(new ServiceRequestMail($service));
             }
+
+
+        } catch (\Exception $e) {
+            // Error sending mail
+            Log::debug($e->getMessage());
+        }
+    }
+
+    public function sendServiceRequestConfirmationEmail($service)
+    {
+        try {
+            Log::info("Sent service email received confirmation  to user, Email address = "
+                . $service->customer->email_address);
+            Mail::to($service->customer->email_address)->send(new ServiceRequestConfirmationMail($service));
 
 
         } catch (\Exception $e) {
@@ -63,12 +78,12 @@ class EmailHandlerImpl implements iEmailHandler
         }
     }
 
-    public function sendAppointmentEmail($event)
+    public function sendReminderEmail($event)
     {
         try {
             foreach ($this->respondents as $respondent) {
                 Log::info("Sent appointment email to recipient handler address " . $this->respondents);
-                Mail::to($respondent->email_address)->send(new EventMail($event));
+                Mail::to($respondent->email_address)->send(new ReminderMail($event));
             }
         } catch (\Exception $e) {
             //Error sending mail
@@ -77,7 +92,20 @@ class EmailHandlerImpl implements iEmailHandler
 
     }
 
-    public function sendCancelAppointmentEmail($event)
+    public function sendReminderConfirmationEmail($event)
+    {
+        try {
+
+            Log::info("Sent reminder email to uer, Email address = " . $event->customer->email_address);
+            Mail::to($event->customer->email_address)->send(new ReminderConfirmationMail($event));
+
+        } catch (\Exception $e) {
+            //Error sending mail
+            Log::debug($e->getMessage());
+        }
+    }
+
+    public function sendCancelReminderEmail($event)
     {
         try {
             foreach ($this->respondents as $respondent) {
@@ -103,4 +131,5 @@ class EmailHandlerImpl implements iEmailHandler
             Log::debug($e->getMessage());
         }
     }
+
 }

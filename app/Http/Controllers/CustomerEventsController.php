@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\EmailHandler\EmailHandlerFactory;
 use App\Event;
-use App\Mail\EventMail;
+use App\Jobs\ReminderCreatedEmailJob;
+use App\Jobs\ReminderReceivedConfirmationJob;
+use App\Mail\ReminderMail;
+use App\Mail\ReminderConfirmationMail;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -452,14 +455,19 @@ class CustomerEventsController extends Controller
 
     private function sendEventEmail($event)
     {
-        $emailHandler = EmailHandlerFactory::createEmailHandler();
-        $emailHandler->sendAppointmentEmail($event);
+        ReminderCreatedEmailJob::dispatch($event)
+            ->delay(now()
+                ->addSeconds(5));
+
+        ReminderReceivedConfirmationJob::dispatch($event)
+            ->delay(now()
+                ->addSeconds(5));
     }
 
     private function sendCancelEventEmail($event)
     {
         $emailHandler = EmailHandlerFactory::createEmailHandler();
-        $emailHandler->sendCancelAppointmentEmail($event);
+        $emailHandler->sendCancelReminderEmail($event);
     }
 
     private function getProperDateFromRange($myDate)

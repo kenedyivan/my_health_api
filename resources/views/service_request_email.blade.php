@@ -1,6 +1,6 @@
 @extends('layouts.email')
-@include('includes.header')
 @section('content')
+    @include('includes.header')
     <?php
     $article = '';
     if ($service_type == 'Ambulance') {
@@ -33,8 +33,8 @@
                     <td class="ser_text" align="center"
                         style="color:#464646; font-size: 1.2em; font-family: Candara; line-height:1.8em;">
                         <p>This is a request from <strong>{{$customer_name}}</strong> who would
-                            like <?php echo $article;?> <strong>{{ strtoupper($service_type ) }}</strong>
-                            on <?php $date = new DateTime($date . ' ' . $time);
+                            like <?php echo $article;?> <strong>{{ strtoupper($service_type ) }}.</strong></p>
+                        <p>On <?php $date = new DateTime($date . ' ' . $time);
                             echo $date->format('Y-m-d \a\t H:i a');?>.</p>
                         <p>Location: {{$location}}</p>
                         <p>Contact: {{$phone_number}}</p>
@@ -48,5 +48,5 @@
             </table>
         </td>
     </tr>
+    @include('includes.footer')
 @endsection
-@include('includes.footer')

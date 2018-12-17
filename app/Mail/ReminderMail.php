@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EventMail extends Mailable
+class ReminderMail extends Mailable
 {
     use Queueable, SerializesModels;
 

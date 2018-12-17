@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EmailHandler\EmailHandlerFactory;
+use App\Jobs\ForgotPasswordEmailJob;
 use Illuminate\Http\Request;
 use App\AppUser;
 
@@ -154,8 +155,12 @@ class UserRegistrationController extends Controller
 
             if ($user->save()) {
                 parent::logger("Saved temporary password to database, Email id = $emailAddress");
-                $emailHandler = EmailHandlerFactory::createEmailHandler();
-                $emailHandler->sendForgotPasswordEmail($emailAddress, $temporaryPassword);
+                /*$emailHandler = EmailHandlerFactory::createEmailHandler();
+                $emailHandler->sendForgotPasswordEmail($emailAddress, $temporaryPassword);*/
+
+                ForgotPasswordEmailJob::dispatch($emailAddress, $temporaryPassword)
+                    ->delay(now()
+                        ->addSeconds(5));
 
                 $resp['msg'] = 'Temporary password generated';
                 $resp['id'] = 0;
