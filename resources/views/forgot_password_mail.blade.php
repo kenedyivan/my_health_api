@@ -12,7 +12,7 @@
                 <!-- //padding-top -->
                 <tr>
                     <td class="wel_text">
-                        <img src="/images/aar_logo.jpeg" width="50px" height="50px">
+                        <img src="http://82.163.78.92:8001/images/aar_logo.jpeg" width="50px" height="50px">
                     </td>
                 </tr>
                 <tr>
