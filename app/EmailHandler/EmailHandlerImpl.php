@@ -23,21 +23,23 @@ use Illuminate\Support\Facades\Mail;
 class EmailHandlerImpl implements iEmailHandler
 {
 
-    private $respondents;
+    private $reminderRespondents;
+    private $serviceRequestRespondents;
 
     /**
      * EmailHandlerImpl constructor.
      */
     public function __construct()
     {
-        $this->respondents = EmailRespondent::all();
+        $this->reminderRespondents = EmailRespondent::where('reminder', 1)->get();
+        $this->serviceRequestRespondents = EmailRespondent::where('service_request', 1)->get();
     }
 
     public function sendServiceRequestEmail($service)
     {
         try {
-            foreach ($this->respondents as $respondent) {
-                Log::info("Sent service email to recipient handler address " . $this->respondents);
+            foreach ($this->serviceRequestRespondents as $respondent) {
+                Log::info("Sent service email to respondent, Email address = " . $respondent->email_address);
                 Mail::to($respondent->email_address)->send(new ServiceRequestMail($service));
             }
 
@@ -65,9 +67,9 @@ class EmailHandlerImpl implements iEmailHandler
     public function sendServiceRequestCancelEmail($service)
     {
         try {
-            foreach ($this->respondents as $respondent) {
+            foreach ($this->serviceRequestRespondents as $respondent) {
                 Log::info("Sent cancel service " . $service->service_type
-                    . " email to recipient handler address " . $this->respondents);
+                    . " email to respondent, Email address = " . $respondent->email_address);
                 Mail::to($respondent->email_address)->send(new ServiceRequestCancelMail($service));
             }
 
@@ -81,8 +83,8 @@ class EmailHandlerImpl implements iEmailHandler
     public function sendReminderEmail($event)
     {
         try {
-            foreach ($this->respondents as $respondent) {
-                Log::info("Sent appointment email to recipient handler address " . $this->respondents);
+            foreach ($this->reminderRespondents as $respondent) {
+                Log::info("Sent reminder email to respondent, Email address = " . $respondent->email_address);
                 Mail::to($respondent->email_address)->send(new ReminderMail($event));
             }
         } catch (\Exception $e) {
@@ -108,9 +110,9 @@ class EmailHandlerImpl implements iEmailHandler
     public function sendCancelReminderEmail($event)
     {
         try {
-            foreach ($this->respondents as $respondent) {
-                Log::info("Sent cancel appointment '.$event->title.
-            ' email to recipient handler address " . $this->respondents);
+            foreach ($this->reminderRespondents as $respondent) {
+                Log::info("Sent cancel reminder '.$event->title.
+            ' email to recipient handler address " . $respondent->email_address);
                 Mail::to($respondent->email_address)->send(new EventCancelMail($event));
             }
         } catch (\Exception $e) {
