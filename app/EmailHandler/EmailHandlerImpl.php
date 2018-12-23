@@ -11,6 +11,7 @@ namespace App\EmailHandler;
 
 use App\EmailRespondent;
 use App\Mail\EventCancelMail;
+use App\Mail\PasswordChangeMail;
 use App\Mail\ReminderMail;
 use App\Mail\ForgotPasswordMail;
 use App\Mail\ReminderConfirmationMail;
@@ -134,4 +135,16 @@ class EmailHandlerImpl implements iEmailHandler
         }
     }
 
+    public function sendPasswordChangedEmail($user)
+    {
+        try {
+
+            Log::info("Sent forgot password email, Email id = { $user->email_address }");
+            Mail::to($user->email_address)->send(new PasswordChangeMail($user));
+
+        } catch (\Exception $e) {
+            //Error sending mail
+            Log::debug($e->getMessage());
+        }
+    }
 }

@@ -18,4 +18,5 @@ interface iEmailHandler
     public function sendReminderConfirmationEmail($event);
     public function sendCancelReminderEmail($event);
     public function sendForgotPasswordEmail($userEmail, $temporaryPassword);
+    public function sendPasswordChangedEmail($user);
 }

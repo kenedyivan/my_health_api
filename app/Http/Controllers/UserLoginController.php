@@ -2,35 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\LoginMode;
 use Illuminate\Http\Request;
 use App\AppUser;
 
 class UserLoginController extends Controller
 {
+    use LoginMode;
+
     function login(Request $request)
     {
         $resp = array();
+        $number = 1;
 
         $emailAddress = $request->input('email_address');
         $password = $request->input('password');
 
-        $user = AppUser::where('email_address', $emailAddress)->take(1)
+        $user = AppUser::where('email_address', $emailAddress)->take($number)
             ->get();
 
         if ($user->count() > 0) {
 
             $user = $user[0];
 
-            if ($user->login_state == 0) { //Recovery mode
-                parent::logger("Email identified, Email id = { $emailAddress }, login mode = { Recovery mode }");
+            if ($user->login_state == $this->NORMAL_MODE) { //Normal Mode
+                parent::logger("Email identified, Email id = { $emailAddress }, login mode = { Normal mode }");
                 if (md5($password) == $user->password) {
                     parent::logger("Login successful, Email id = { $emailAddress }");
                     $resp['msg'] = 'Login successful';
                     $resp['id'] = $user->customer_id;
-                    $resp['user'] = ['first_name' => $user->first_name,
-                        'last_name' => $user->last_name,
-                        'email_address' => $user->email_address,
-                        'phone_number' => $user->phone_number];
+                    $resp['user'] = $resp['user'] = $user->getUserDetails();
+                    $resp['mode'] = 'normal';
                     $resp['error'] = 0;
                     $resp['success'] = 1;
 
@@ -41,8 +43,8 @@ class UserLoginController extends Controller
                     $resp['error'] = 1;
                     $resp['success'] = 0;
                 }
-            } else if ($user->login_state == 1) { //Normal mode
-                parent::logger("Email identified, Email id = { $emailAddress }, login mode = { Normal mode }");
+            } else if ($user->login_state == $this->RECOVERY_MODE) { //Recovery Mode
+                parent::logger("Email identified, Email id = { $emailAddress }, login mode = { Recovery mode }");
                 if (md5($password) == $user->temporary_password) {
 
                     $user->temporary_password = null;
@@ -53,10 +55,8 @@ class UserLoginController extends Controller
                     parent::logger("Login successful, Email id = { $emailAddress }");
                     $resp['msg'] = 'Login successful';
                     $resp['id'] = $user->customer_id;
-                    $resp['user'] = ['first_name' => $user->first_name,
-                        'last_name' => $user->last_name,
-                        'email_address' => $user->email_address,
-                        'phone_number' => $user->phone_number];
+                    $resp['user'] = $user->getUserDetails();
+                    $resp['mode'] = 'recovery';
                     $resp['error'] = 0;
                     $resp['success'] = 1;
 

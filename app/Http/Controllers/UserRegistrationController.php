@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\EmailHandler\EmailHandlerFactory;
 use App\Jobs\ForgotPasswordEmailJob;
+use App\Jobs\PasswordChangeJob;
+use App\Mail\PasswordChangeMail;
+use App\Traits\LoginMode;
 use Illuminate\Http\Request;
 use App\AppUser;
 
 class UserRegistrationController extends Controller
 {
 
+    use LoginMode;
 
     function register(Request $request)
     {
@@ -43,10 +47,7 @@ class UserRegistrationController extends Controller
             if ($user->save()) {
                 $resp['msg'] = 'User registration successful';
                 $resp['id'] = $user->customer_id;
-                $resp['user'] = ['first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'email_address' => $user->email_address,
-                    'phone_number' => $user->phone_number];
+                $resp['user'] = $user->getUserDetails();
                 $resp['error'] = 0;
                 $resp['success'] = 1;
             } else {
@@ -155,12 +156,12 @@ class UserRegistrationController extends Controller
 
             if ($user->save()) {
                 parent::logger("Saved temporary password to database, Email id = $emailAddress");
-                /*$emailHandler = EmailHandlerFactory::createEmailHandler();
-                $emailHandler->sendForgotPasswordEmail($emailAddress, $temporaryPassword);*/
 
                 ForgotPasswordEmailJob::dispatch($emailAddress, $temporaryPassword)
                     ->delay(now()
                         ->addSeconds(5));
+
+                parent::logger("Dispatched forgot password email notification with temporary password, Email id = $emailAddress");
 
                 $resp['msg'] = 'Temporary password generated';
                 $resp['id'] = 0;
@@ -189,7 +190,7 @@ class UserRegistrationController extends Controller
 
     function updatePassword(Request $request)
     {
-        
+
         $customer_id = $request->input('customer_id');
         $password = $request->input('password');
 
@@ -199,16 +200,24 @@ class UserRegistrationController extends Controller
         if ($password != null) {
             $user->password = md5($password);
             if ($user->save()) {
+                parent::logger("Updated user password, Email id = $user->email_address");
+
+                PasswordChangeJob::dispatch($user)
+                    ->delay(now()
+                        ->addSeconds(5));
+                parent::logger("Dispatched change password email notification, Email id = $user->email_address");
                 $resp['msg'] = 'Password updated';
                 $resp['error'] = 0;
                 $resp['success'] = 1;
 
             } else {
+                parent::logger("Failed to update password to database, Email id = $user->email_address");
                 $resp['msg'] = 'Password update failed';
                 $resp['error'] = 1;
                 $resp['success'] = 0;
             }
         } else {
+            parent::logger("Password field is empty, Email id = $user->email_address");
             $resp['msg'] = 'Password field empty';
             $resp['error'] = 2;
             $resp['success'] = 0;
