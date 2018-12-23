@@ -22,6 +22,7 @@ Route::post('/users/login', 'UserLoginController@login');
 Route::post('/users/register', 'UserRegistrationController@register');
 Route::post('/users/update', 'UserRegistrationController@update');
 Route::get('/users/admin', 'UserRegistrationController@getAllUsers');
+Route::post('/users/update-password', 'UserRegistrationController@updatePassword');
 
 //Forgot password
 Route::post('/users/forgot-password', 'UserRegistrationController@forgotPassword');

@@ -189,6 +189,7 @@ class UserRegistrationController extends Controller
 
     function updatePassword(Request $request)
     {
+        
         $customer_id = $request->input('customer_id');
         $password = $request->input('password');
 
