@@ -70,6 +70,7 @@ Route::get('/users/my-health/service-request', 'CustomerServiceRequestController
 Route::get('/users/my-health/service-request/admin', 'CustomerServiceRequestController@getServicesAdmin');
 Route::get('/users/my-health/service-customer', 'CustomerServiceRequestController@getServiceCustomer');
 Route::post('/users/my-health/service-request/cancel', 'CustomerServiceRequestController@cancelServiceRequest');
+Route::post('/users/my-health/service-request/edit', 'CustomerServiceRequestController@editServiceRequest');
 
 //Medications
 Route::get('/medicines', 'MedicationsController@getMedicationList');

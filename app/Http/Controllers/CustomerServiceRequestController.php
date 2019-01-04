@@ -59,6 +59,62 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
+    function editServiceRequest(Request $request)
+    {
+        $resp = array();
+
+        $customerId = $request->input('customer_id');
+        $serviceId = $request->input('service_id');
+        $serviceType = $request->input('service_type');
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $day = $request->input('day');
+        $hour = $request->input('hour');
+        $minute = $request->input('minute');
+        $location = $request->input('location');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+
+        $serviceRequest = ServiceRequest::find($serviceId);
+
+        $serviceRequest->service_type = $serviceType;
+        if ($month == 0 || $month == 12) {
+            $formattedMonth = 12;
+        } else {
+            $formattedMonth = $month;
+        }
+        $serviceRequest->set_date = $year . '-' . $formattedMonth . '-' . $day;
+        $serviceRequest->set_time = $hour . ':' . $minute;
+        if($location != ''){
+            $serviceRequest->location = $location;
+        }
+
+        if($latitude != 0){
+            $serviceRequest->latitude = $latitude;
+        }
+
+        if($longitude !=0){
+            $serviceRequest->longitude = $longitude;
+        }
+
+
+        $serviceRequest->status = 'Pending';
+        $serviceRequest->is_cancelled = 0;
+
+        if ($serviceRequest->save()) {
+            //$this->sendServiceRequestEmail($serviceRequest);
+            $resp['msg'] = 'Service request saved successfully';
+            $resp['error'] = 0;
+            $resp['success'] = 1;
+        } else {
+            $resp['msg'] = 'Failed saving service request';
+            $resp['error'] = 1;
+            $resp['success'] = 0;
+        }
+
+        return $resp;
+    }
+
     //Gets service requests for customer android client
     function getServices(Request $request)
     {
