@@ -39,6 +39,7 @@ Route::get('/users/events/broadcast', 'CustomerEventsController@eventsBroadcast'
 Route::get('/users/events/delete', 'CustomerEventsController@delete');
 Route::post('/users/events/update', 'CustomerEventsController@updateEvent');
 Route::post('/users/events/comment', 'CustomerEventsController@saveComment');
+Route::post('/users/events/cancel', 'CustomerEventsController@cancelEvent');
 
 //Illnesses and Allergies
 Route::get('/users/my-health/illnesses', 'CustomerIllnessesControllerOrig@getIllnesses');
@@ -68,6 +69,7 @@ Route::post('/users/my-health/service-request', 'CustomerServiceRequestControlle
 Route::get('/users/my-health/service-request', 'CustomerServiceRequestController@getServices');
 Route::get('/users/my-health/service-request/admin', 'CustomerServiceRequestController@getServicesAdmin');
 Route::get('/users/my-health/service-customer', 'CustomerServiceRequestController@getServiceCustomer');
+Route::post('/users/my-health/service-request/cancel', 'CustomerServiceRequestController@cancelServiceRequest');
 
 //Medications
 Route::get('/medicines', 'MedicationsController@getMedicationList');

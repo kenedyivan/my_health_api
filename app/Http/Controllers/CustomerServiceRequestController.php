@@ -59,7 +59,7 @@ class CustomerServiceRequestController extends Controller
         return $resp;
     }
 
-    //Gest service requests for customer android client
+    //Gets service requests for customer android client
     function getServices(Request $request)
     {
         $customer_id = $request->input('customer_id');
@@ -80,6 +80,7 @@ class CustomerServiceRequestController extends Controller
                 $serviceObject["set_time"] = $service->set_time;
                 $serviceObject["location"] = $service->location;
                 $serviceObject["status"] = $service->status;
+                $serviceObject["is_canceled"] = $service->is_cancelled;
 
                 array_push($servicesArray, $serviceObject);
             }
