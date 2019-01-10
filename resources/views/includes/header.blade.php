@@ -18,10 +18,10 @@
                                     <tr>
                                         <td class="mail_gd" align="center"
                                             style=" text-align: left; font-size:1.2em; font-family:Candara; color: #FFFFFF;">
-                                            <a href="mailto:info@example.com"
+                                            <a href="mailto:notifications.ug@aar-healthcare.com"
                                                style="color:#fff;text-decoration:none"><img
-                                                        src="/images/envelope.png" alt="" border="0"
-                                                        height="18" width="18">&nbsp; &nbsp;info@myhealth.com</a>
+                                                        src="http://82.163.78.92:8001/images/envelope.png" alt="" border="0"
+                                                        height="18" width="18">&nbsp; &nbsp;notifications.ug@aar-healthcare.com</a>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -32,8 +32,8 @@
                                     <tr>
                                         <td align="center"
                                             style="font-size:14px;color:#f5f5f5;font-family:Arial,serif">
-                                            <img src="/images/1.png" alt="" border="0" height="16"
-                                                 width="16">&nbsp; &nbsp;+1234 567 892
+                                            <img src="http://82.163.78.92:8001/images/1.png" alt="" border="0" height="16"
+                                                 width="16">&nbsp; &nbsp;+256 782 140436
                                         </td>
                                     </tr>
                                     </tbody>
